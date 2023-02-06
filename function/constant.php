@@ -1,4 +1,5 @@
 <?php
+require 'vendor/autoload.php';
     session_start();
 
     //define('SITEURL', 'http://localhost/');

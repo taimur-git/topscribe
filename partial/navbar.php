@@ -10,7 +10,7 @@
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
     <?php
-    include('function/constant.php');
+    //include('function/constant.php');
     if(isset($_SESSION['name'])) {
         $name = $_SESSION['name'];
         echo "Welcome $name.";

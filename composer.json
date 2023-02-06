@@ -1,0 +1,7 @@
+{
+    "require": {
+        "thiagoalessio/tesseract_ocr": "^2.12",
+        "cebe/markdown-latex": "*",
+        "phpoffice/phpword": "^1.0"
+    }
+}
