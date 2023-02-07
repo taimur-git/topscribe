@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => 'dev-main',
-        'version' => 'dev-main',
-        'reference' => '59cd9d0a01f5adab4db109b7afbb5549a1a2ad73',
+        'pretty_version' => '1.0.0+no-version-set',
+        'version' => '1.0.0.0',
+        'reference' => NULL,
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-main',
-            'version' => 'dev-main',
-            'reference' => '59cd9d0a01f5adab4db109b7afbb5549a1a2ad73',
+            'pretty_version' => '1.0.0+no-version-set',
+            'version' => '1.0.0.0',
+            'reference' => NULL,
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -34,6 +34,15 @@
             'reference' => 'c2b13f5fe8e9417deacb715b9148c4958f941d10',
             'type' => 'library',
             'install_path' => __DIR__ . '/../cebe/markdown-latex',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'copyleaks/php-plagiarism-checker' => array(
+            'pretty_version' => 'v3.2.0',
+            'version' => '3.2.0.0',
+            'reference' => '649c0617c38bd20f6e051c0704dfad2fe097ab6e',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../copyleaks/php-plagiarism-checker',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
