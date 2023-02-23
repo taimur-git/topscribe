@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "560d53ff4a0ed38a97e6e502f2036d86",
+    "content-hash": "03cd7cde3cb64177c7b5e4d2ce8ca082",
     "packages": [
         {
             "name": "cebe/markdown",
@@ -133,6 +133,58 @@
                 "source": "https://github.com/cebe/markdown-latex"
             },
             "time": "2019-05-21T13:27:49+00:00"
+        },
+        {
+            "name": "copyleaks/php-plagiarism-checker",
+            "version": "v3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Copyleaks/PHP-Plagiarism-Checker.git",
+                "reference": "649c0617c38bd20f6e051c0704dfad2fe097ab6e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Copyleaks/PHP-Plagiarism-Checker/zipball/649c0617c38bd20f6e051c0704dfad2fe097ab6e",
+                "reference": "649c0617c38bd20f6e051c0704dfad2fe097ab6e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "autoload.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Copyleaks ltd",
+                    "email": "support@copyleaks.com",
+                    "homepage": "https://copyleaks.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Copyleaks detects online plagiarism and checks content distribution. Use Copyleaks to find out if textual content is original and where it has been used before. This package shows how to integrate with the Copyleaks cloud to search for copyright infringement.",
+            "homepage": "https://api.copyleaks.com",
+            "keywords": [
+                "Copyleaks",
+                "checker",
+                "copyrights",
+                "education",
+                "infringement",
+                "plagiarism",
+                "publisher"
+            ],
+            "support": {
+                "issues": "https://github.com/Copyleaks/PHP-Plagiarism-Checker/issues",
+                "source": "https://github.com/Copyleaks/PHP-Plagiarism-Checker/tree/v3.2.0"
+            },
+            "time": "2022-06-09T12:47:52+00:00"
         },
         {
             "name": "laminas/laminas-escaper",

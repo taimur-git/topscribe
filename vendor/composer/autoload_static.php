@@ -6,6 +6,10 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit274e754f7692d2524f902f50e69ffbdd
 {
+    public static $files = array (
+        '077c46ea4b0fe94d4bac6ac6d1c848fe' => __DIR__ . '/..' . '/copyleaks/php-plagiarism-checker/autoload.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         't' => 
         array (
