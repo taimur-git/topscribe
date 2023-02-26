@@ -12,7 +12,8 @@ if(isset($_POST['username']) && isset($_POST['password'])){
     if (mysqli_num_rows($result) === 1) {
         $row = mysqli_fetch_assoc($result);
         if (password_verify($pass,$row['password'])) {
-            $_SESSION['name'] = $row['login'];
+            $_SESSION['name'] = $row['username'];
+            $_SESSION['id'] = $row['id'];
             header("Location: ../index.php");
 		    exit();
         }else{

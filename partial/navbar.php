@@ -4,6 +4,10 @@
     <meta name="author" content="Taimur Rahman" />
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
+<!--simpleMDE-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+
 </head>
 
 
@@ -16,7 +20,8 @@
     include('function/constant.php');
     if(isset($_SESSION['name'])) {
         $name = $_SESSION['name'];
-        echo "Welcome $name.";
+        $id = $_SESSION['id'];
+        echo "Welcome $id $name.";
     }
 ?>
 
@@ -28,10 +33,10 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li><a class="nav-link active" aria-current="page" href="#">Home</a></li>
-            <li><a class="nav-link" aria-current="page" href="#">Editor</a></li>
-            <li><a class="nav-link" aria-current="page" href="#">Browse</a></li>
-            <li><a class="nav-link" aria-current="page" href="#">Discover</a></li>
+            <li><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
+            <li><a class="nav-link" aria-current="page" href="editor.php">Editor</a></li>
+            <li><a class="nav-link" aria-current="page" href="browse.php">Browse</a></li>
+            <li><a class="nav-link" aria-current="page" href="discover.php">Discover</a></li>
             <li><a class="nav-link" aria-current="page" href="#">Search</a></li>
         </ul>
     

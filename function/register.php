@@ -11,7 +11,7 @@ include('constant.php');
     
     }
     else {
-        $sql = "SELECT * FROM user WHERE login='$uname'";
+        $sql = "SELECT * FROM usernames WHERE username='$uname'";
         $result = mysqli_query($conn, $sql);
         if (mysqli_num_rows($result) !== 0) {
             header("Location: ../registration.php?error=Account already exists");
