@@ -19,7 +19,7 @@ include('constant.php');
         }
         else{
                 $hash = password_hash($pass, PASSWORD_DEFAULT);
-                $sql = "INSERT INTO user (login,pass) VALUE ('$uname','$hash')";
+                $sql = "INSERT INTO usernames (username,password) VALUE ('$uname','$hash')";
                 mysqli_query($conn, $sql);
                 session_unset();
                 session_destroy();

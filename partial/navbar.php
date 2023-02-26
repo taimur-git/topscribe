@@ -3,12 +3,15 @@
     <title>TopScribe</title>
     <meta name="author" content="Taimur Rahman" />
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 
 <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
+    <img src="images/logo.svg" alt="Logo" class="d-inline-block align-text-top filter-white">
+
     <?php
     include('function/constant.php');
     if(isset($_SESSION['name'])) {
@@ -21,13 +24,26 @@
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
+
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li><a class="nav-link active" aria-current="page" href="#">Home</a></li>
+            <li><a class="nav-link" aria-current="page" href="#">Editor</a></li>
+            <li><a class="nav-link" aria-current="page" href="#">Browse</a></li>
+            <li><a class="nav-link" aria-current="page" href="#">Discover</a></li>
+            <li><a class="nav-link" aria-current="page" href="#">Search</a></li>
+        </ul>
     
 <?php
+
+
     if(isset($_SESSION['name'])) {
         echo "<a href='function/logout.php' class='btn btn-primary'>Logout</a>";
     }else{
     ?>
+
+
     <form class="d-flex"  action="function/login.php" method="post">
         <input class="form-control me-2" type="text" maxlength="11" name="username" placeholder="Username" required>
         <input class="form-control me-2" type="password" name="password" placeholder="Password" required>
