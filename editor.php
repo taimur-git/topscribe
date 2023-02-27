@@ -10,8 +10,12 @@
 
     <textarea name='body'></textarea>
     <div class="d-grid gap-2">
-        <button class="btn btn-primary" type="submit" >Publish</button>
-        <button class="btn btn-primary" type="submit" >Save as Draft</button>
+<?php
+    if(isset($_SESSION['name'])) {
+        echo "<button class='btn btn-primary' type='submit' >Publish</button>
+        <button class='btn btn-primary' type='submit' >Save as Draft</button>";
+    }
+?>
     </div>
 
 </form>

@@ -27,3 +27,19 @@
 .borderless:focus{
     outline:none;
 }
+
+.blurb{
+    background: rgb(0,0,0);
+background: linear-gradient(
+    180deg, 
+    rgba(0,0,0,1) 0%, 
+    rgba(0,0,0,0.7) 50%,
+    rgba(0,0,0,0) 90%);
+    background-size: 100%;
+    background-clip: text;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; 
+  -moz-background-clip: text;
+  -moz-text-fill-color: transparent;
+}

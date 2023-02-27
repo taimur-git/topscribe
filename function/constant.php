@@ -30,37 +30,62 @@ function publishWriting($conn, $title,$body,$authorID,$status=0,$subcategoryID=1
 function saveAsDraft($conn, $title,$body,$authorID,$subcategoryID){
     publishWriting($conn, $title,$body,$authorID,3,$subcategoryID);
 }
-function showWriting($conn,$id){
-    //show : title, body liimited to 100 char
-    //read time : trim length 
-    //subcategory
-    $sql = "SELECT title,left(body,100) as blurb,round((length(body)+240)/1440,0) as readtime,subcategory.name as subcategory FROM `writing` join `subcategory` on writing.subcategoryID=subcategory.id WHERE writing.id = ".$id;
+function showAllWriting($conn){
+    //replace(body,'#*>[]','')
+    //concat ...
+    $cards = "<div class='list-group'>";
+    $sql = "SELECT writing.id as id,
+    title,left(body,430) as blurb,
+    round((length(trim(body))+240)/1440,0) as readtime,
+    subcategory.name as subcategory
+    FROM `writing` join `subcategory` on writing.subcategoryID=subcategory.id
+    where writing.status = 0";
     $res = mysqli_query($conn,$sql);
-    $row = mysqli_fetch_assoc($res);
-
-
+while($row = mysqli_fetch_assoc($res)){
+    $writeID = $row['id'];
     $title = $row['title'];
-    $blurb = $row['blurb'];
+    $blurb = $row['blurb']."...";
     $readtime = $row['readtime']==0?'< 1':$row['readtime'];
     $readtime.=' min read';
     $subcategory = $row['subcategory'];
 
-
-//<div class="list-group">
-$card = 
-"<a href='work.php?id='".$id."' class='list-group-item list-group-item-action flex-column align-items-start'>
+$cards .= 
+"<a href='work.php?id=$writeID' class='list-group-item list-group-item-action flex-column align-items-start'>
   <div class='d-flex w-100 justify-content-between'>
     <h5 class='mb-1'>$title</h5>
     <small>$readtime</small>
   </div>
-  <p class='mb-1'>$blurb</p>
+  <p class='mb-1 blurb'>$blurb</p>
   <small>$subcategory</small>
 </a>";
+}
+    $cards.='</div>';
 
+echo $cards;
+}
+
+function displayWriting($conn,$id){
+    $sql = "select title, body, username as author, subcategory.name as subcategory
+    FROM `writing` join `subcategory` on writing.subcategoryID=subcategory.id
+    join `usernames` on writing.authorID=usernames.id
+    where writing.id = $id";
+    $res = mysqli_query($conn,$sql);
+    $row = mysqli_fetch_assoc($res);
+
+    $title = $row['title'];
+    $body = $row['body'];
+    $author = $row['author'];
+    $subcategory = $row['subcategory'];
+
+    $card = "<div class=container>
+    <div class='card'>
+  <div class='card-body'>
+    <h4 class='card-title'>$title</h4>
+    <h6 class='card-subtitle mb-2 text-muted'>$author</h6>
+    <p class='card-text'>$body</p>
+  </div>
+</div></div>";
 echo $card;
-
-//</div>
-
 
 }
 ?>
