@@ -88,4 +88,76 @@ function displayWriting($conn,$id){
 echo $card;
 
 }
+
+function showAllContest($conn){
+  //$cards ="";
+    $sql = "select contest.id as id, contest.title as title, concat(left(contest.description,100),'...') as blurb, start, end, capacity, subcategory.name as subcategory, category.name as category, count(contestusers.writerID) as registered, usernames.username as host
+    from contest join subcategory on contest.subcategoryID = subcategory.id
+    join category on subcategory.catID = category.id
+    join usernames on contest.hostID = usernames.id
+    left join contestusers on contest.id = contestusers.contestID
+    group by contest.id";
+
+    /*select contest.id as id, contest.title as title, concat(left(contest.description,100),'...') as blurb, start, end, capacity, subcategory.name as subcategory, usernames.username as host
+    from contest join subcategory on contest.subcategoryID = subcategory.id
+    join category on subcategory.catID = category.id
+    join usernames on contest.hostID = usernames.id*/
+//, count(contestusers.writerID) as registered on each
+$res = mysqli_query($conn,$sql);
+//echo $res;
+while($row = mysqli_fetch_assoc($res)){
+    $contestID = $row['id'];
+    $title = $row['title'];
+    $blurb = $row['blurb']; //check if start date is passed, then show
+    $startDate = $row['start'];
+    $endDate = $row['end']; 
+    $capacity = $row['capacity']; //can be null
+    $subcategory = $row['subcategory'];
+    $category = $row['category'];
+    $registered = $row['registered'];
+    $host = $row['host'];
+    
+//div class = row
+//div class = col lg 4
+//div class = bs-component
+    //maybe depending on category, we have different colors. like red for essay, green for article, blue for poetry
+    //and the card body could be white for contests, black for requests?
+$card = "
+    <div class='card mb-3'>
+  <h3 class='card-header'>$title</h3>
+  <div class='card-body'>
+    <h5 class='card-title'>$subcategory</h5>
+    <h6 class='card-subtitle text-muted'>Hosted by: $host</h6>
+  </div>
+  <div class='card-body'>
+    <p>$blurb</p>";
+    //"<p>$registered registed out of $capacity filled.</p> "
+    //<span class="badge bg-primary rounded-pill">$registered / $capacity</span>
+  $card .= "</div>
+  <div class='card-footer text-muted'>
+    $startDate
+  </div>
+</div>
+";
+echo $card;
+//$cards .= $card;
+
+}
+//echo $cards;
+}
+
+function createContest($conn, $title, $description,$host,$subcategoryID=19,$capacity=null,$start=null,$end=null,$judges=null,$classroom=null){
+  $sql = $start==null ? 
+  "insert into contest
+  (title, description,hostID,subcategoryID)
+  value ('$title' , '$description','$host','$subcategoryID')"
+  : 
+  "insert into contest
+  (title, description, start,end,capacity,judgeGroup,writerGroup,hostID,accepted,subcategoryID)
+  value ('$title' , '$description', '$start','$end','$capacity','$judgeGroup','$writerGroup','$host','$accepted','$subcategoryID')" ;
+
+    mysqli_query($conn,$sql);
+    $contest_id = mysqli_insert_id($conn);
+    return $contest_id;
+}
 ?>
