@@ -48,7 +48,7 @@ while($row = mysqli_fetch_assoc($res)){
     $readtime = $row['readtime']==0?'< 1':$row['readtime'];
     $readtime.=' min read';
     $subcategory = $row['subcategory'];
-
+//"<a href='work.php?id=$writeID' class='list-group-item list-group-item-action flex-column align-items-start'>
 $cards .= 
 "<a href='work.php?id=$writeID' class='list-group-item list-group-item-action flex-column align-items-start'>
   <div class='d-flex w-100 justify-content-between'>
@@ -159,5 +159,12 @@ function createContest($conn, $title, $description,$host,$subcategoryID=19,$capa
     mysqli_query($conn,$sql);
     $contest_id = mysqli_insert_id($conn);
     return $contest_id;
+}
+
+function incrementView($conn, $id){
+  $sql = "update writing
+  set views = views + 1
+  where id='$id'";
+  mysqli_query($conn,$sql);
 }
 ?>
