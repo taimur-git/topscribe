@@ -126,7 +126,7 @@ while($row = mysqli_fetch_assoc($res)){
     //maybe depending on category, we have different colors. like red for essay, green for article, blue for poetry
     //and the card body could be white for contests, black for requests?
 $card = "
-    <div class='card mb-3'>
+    <div class='card mb-3 contestcard'>
   <h3 class='card-header'>$title</h3>
   <div class='card-body'>
     <h5 class='card-title'>$subcategory</h5>
@@ -182,9 +182,16 @@ function removeBookmark($conn, $userid, $writingid){
   mysqli_query($conn,$sql);
 }
 
+function deleteWriting($conn,$writingid){
+  $sql = "DELETE FROM bookmarks WHERE writingid='$writingid'";
+  mysqli_query($conn,$sql);
+  $sql = "DELETE FROM writing WHERE id='$writingid'";
+  mysqli_query($conn,$sql);
+}
+
 
 function profileView($conn,$id){
-  $sql = "select username,photo from usernames
+  $sql = "select usernames.id as uid, username,photo from usernames
   join writing on writing.authorID=usernames.id
   where writing.id = $id";
 
@@ -193,9 +200,11 @@ function profileView($conn,$id){
 
   $author = $row['username'];
   $imgurl = $row['photo'];//check if null then default
+  $uid = $row['uid'];
   //return $author;
   echo "<img class='profile-pic' src='$imgurl'>";
   echo "<h5>$author</h5>";
+  return $uid;
 }
 function ifBookmark($conn,$userid,$writingid){
   $sql = "select * from bookmarks where userid='$userid' and writingid = '$writingid'";

@@ -4,6 +4,7 @@ include('constant.php');
     $uname = validate($_POST['username']);
 	$pass = validate($_POST['password']);
     $c_pass= validate($_POST['c_password']);
+    $imgurl = $_POST['imgurl'];
 
     if($pass !== $c_pass){
         header("Location: ../registration.php?error=Password is not same");
@@ -19,7 +20,7 @@ include('constant.php');
         }
         else{
                 $hash = password_hash($pass, PASSWORD_DEFAULT);
-                $sql = "INSERT INTO usernames (username,password) VALUE ('$uname','$hash')";
+                $sql = "INSERT INTO usernames (username,password,photo) VALUE ('$uname','$hash','$imgurl')";
                 mysqli_query($conn, $sql);
                 session_unset();
                 session_destroy();

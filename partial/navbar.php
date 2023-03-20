@@ -2,12 +2,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TopScribe</title>
     <meta name="author" content="Taimur Rahman" />
+    <link rel="stylesheet" href="css/dragula.min.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
 <!--simpleMDE-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
 
 </head>
 
@@ -22,7 +25,7 @@
     if(isset($_SESSION['name'])) {
         $name = $_SESSION['name'];
         $id = $_SESSION['id'];
-        echo "Welcome $id $name.";
+        echo "Welcome $name.";
     }
 ?>
 
