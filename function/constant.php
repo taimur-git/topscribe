@@ -33,6 +33,7 @@ function saveAsDraft($conn, $title,$body,$authorID,$subcategoryID){
 function showAllWriting($conn){
     //replace(body,'#*>[]','')
     //concat ...
+    //SELECT title, count(userid) FROM `writing` right join `bookmarks` on writing.id=bookmarks.writingid
     $cards = "<div class='list-group'>";
     $sql = "SELECT writing.id as id,
     title,left(body,430) as blurb,
@@ -65,7 +66,7 @@ echo $cards;
 }
 
 function displayWriting($conn,$id){
-    $sql = "select title, body, username as author, subcategory.name as subcategory
+    $sql = "select title, body, username as author, datePublished, subcategory.name as subcategory
     FROM `writing` join `subcategory` on writing.subcategoryID=subcategory.id
     join `usernames` on writing.authorID=usernames.id
     where writing.id = $id";
@@ -75,13 +76,15 @@ function displayWriting($conn,$id){
     $title = $row['title'];
     $body = $row['body'];
     $author = $row['author'];
+    $date = $row['datePublished'];
     $subcategory = $row['subcategory'];
 
-    $card = "<div class=container>
-    <div class='card'>
+
+    $card = "<div class=writing>
+    <div class='card' style='border:none;'>
   <div class='card-body'>
     <h4 class='card-title'>$title</h4>
-    <h6 class='card-subtitle mb-2 text-muted'>$author</h6>
+    <h6 class='card-subtitle mb-2 text-muted'>$date</h6>
     <p class='card-text'>$body</p>
   </div>
 </div></div>";
@@ -167,4 +170,37 @@ function incrementView($conn, $id){
   where id='$id'";
   mysqli_query($conn,$sql);
 }
+
+function addBookmark($conn, $userid, $writingid){
+  $sql = "INSERT INTO bookmarks
+  VALUES ('$userid' , '$writingid')";
+  mysqli_query($conn,$sql);
+}
+
+function removeBookmark($conn, $userid, $writingid){
+  $sql = "DELETE FROM bookmarks WHERE userid='$userid' and writingid='$writingid'";
+  mysqli_query($conn,$sql);
+}
+
+
+function profileView($conn,$id){
+  $sql = "select username,photo from usernames
+  join writing on writing.authorID=usernames.id
+  where writing.id = $id";
+
+  $res = mysqli_query($conn,$sql);
+  $row = mysqli_fetch_assoc($res);
+
+  $author = $row['username'];
+  $imgurl = $row['photo'];//check if null then default
+  //return $author;
+  echo "<img class='profile-pic' src='$imgurl'>";
+  echo "<h5>$author</h5>";
+}
+function ifBookmark($conn,$userid,$writingid){
+  $sql = "select * from bookmarks where userid='$userid' and writingid = '$writingid'";
+  $res=mysqli_query($conn, $sql);
+  return mysqli_num_rows($res)!=0;
+}
+
 ?>

@@ -43,3 +43,30 @@ background: linear-gradient(
   -moz-background-clip: text;
   -moz-text-fill-color: transparent;
 }
+
+.writing{
+    width: 75%;
+    margin: 2.5%;
+    float:left;
+}
+
+.profilebar{
+    float: left;
+    width: 15%;
+    margin: 2.5%;
+}
+
+.cleanbutton{
+    border: none;
+    background: none;
+
+}
+
+.profile-pic{
+    clip-path: circle(40%);
+    width: 50%;
+}
+
+#bookmark{
+    transition: all 1s;
+}
