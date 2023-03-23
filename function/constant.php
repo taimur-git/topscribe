@@ -38,7 +38,7 @@ function showAllWriting($conn){
     $sql = "SELECT writing.id as id,
     title,left(body,430) as blurb,
     round((length(trim(body))+240)/1440,0) as readtime,
-    subcategory.name as subcategory
+    subcategory.name as subcategory, views
     FROM `writing` join `subcategory` on writing.subcategoryID=subcategory.id
     where writing.status = 0";
     $res = mysqli_query($conn,$sql);
@@ -50,6 +50,10 @@ while($row = mysqli_fetch_assoc($res)){
     $readtime.=' min read';
     $subcategory = $row['subcategory'];
     $topics = returnTags($conn,$writeID);
+    $views = $row['views'];
+    $bookmarks = getBookmarks($conn,$writeID);
+
+    $stats = "$views <i class='fa-solid fa-eye'></i> $bookmarks <i class='fa-regular fa-bookmark'></i>";
 //"<a href='work.php?id=$writeID' class='list-group-item list-group-item-action flex-column align-items-start'>
 $cards .= 
 "<a href='work.php?id=$writeID' class='list-group-item list-group-item-action flex-column align-items-start'>
@@ -58,8 +62,11 @@ $cards .=
     <small>$readtime</small>
   </div>
   <p class='mb-1 blurb'>$blurb</p>
-  <small>$subcategory</small>
-  $topics
+  <div class='d-flex w-100 justify-content-between'>
+  <small>$subcategory $topics</small>
+  <span>$stats</span>
+  </div>
+  
 </a>";
 }
     $cards.='</div>';
@@ -337,5 +344,18 @@ function addTopic($conn,$topic){
     $id = $row['tid'];
   }
   return $id;
+}
+
+function getBookmarks($conn,$writing_id){
+//SELECT title, count(userid) FROM `writing` right join `bookmarks` on writing.id=bookmarks.writingid
+$sql = "select writingid,count(userid) as count from writing join bookmarks on writing.id=bookmarks.writingid group by writingid having writingid='$writing_id'";
+$res = mysqli_query($conn,$sql);
+if(mysqli_num_rows($res)==0){
+  return 0;
+}else{
+  $row = mysqli_fetch_assoc($res);
+  return $row['count'];
+}
+//SELECT writingid,count(userid) FROM `writing` right join `bookmarks` on writing.id=bookmarks.writingid group by writingid having writingid=12
 }
 ?>
