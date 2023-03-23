@@ -3,9 +3,6 @@
         "thiagoalessio/tesseract_ocr": "^2.12",
         "cebe/markdown-latex": "*",
         "phpoffice/phpword": "^1.0",
-        "copyleaks/php-plagiarism-checker": "^3.2",
-        "cloudmersive/cloudmersive_validate_api_client": "^1.7",
-        "cloudmersive/cloudmersive_nlp_api_client": "^2.1",
-        "yooper/php-text-analysis": "^1.8"
+        "copyleaks/php-plagiarism-checker": "^3.2"
     }
 }

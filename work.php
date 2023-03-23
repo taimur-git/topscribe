@@ -32,6 +32,9 @@ echo "<button type='button' class=cleanbutton data-bs-container='body' data-bs-t
 data-bs-placement='bottom' data-bs-content='$url' onclick='copyToClipboard()'>
 <i class='fa-solid fa-link'></i>
 </button>";
+echo "<button type='button' class=cleanbutton onclick='downloadPDF()'><i class='fa-solid fa-download'></i></button>";
+$topics = returnTags($conn,$id);
+echo "<p>$topics</p>";
 
 echo "</div>";
 

@@ -20,7 +20,7 @@
             <div class="cell">
 				<img class="registration-profile" src="" alt="">
 				<div class="add-remove">
-					<i onclick="toggleImgInput()" class="fa-solid fa-plus"></i>
+					<i onclick="toggleImgInput()" class="fa-solid fa-plus img-plus"></i>
 					<input onchange="imgChange()" id="imgurl" type="text" name="imgurl" class="hidden"
 						   placeholder="Image URL"/>
 				</div>

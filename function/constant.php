@@ -49,6 +49,7 @@ while($row = mysqli_fetch_assoc($res)){
     $readtime = $row['readtime']==0?'< 1':$row['readtime'];
     $readtime.=' min read';
     $subcategory = $row['subcategory'];
+    $topics = returnTags($conn,$writeID);
 //"<a href='work.php?id=$writeID' class='list-group-item list-group-item-action flex-column align-items-start'>
 $cards .= 
 "<a href='work.php?id=$writeID' class='list-group-item list-group-item-action flex-column align-items-start'>
@@ -58,6 +59,7 @@ $cards .=
   </div>
   <p class='mb-1 blurb'>$blurb</p>
   <small>$subcategory</small>
+  $topics
 </a>";
 }
     $cards.='</div>';
@@ -90,6 +92,7 @@ function displayWriting($conn,$id){
 </div></div>";
 echo $card;
 
+//renderTags($conn,$id);
 }
 
 function showAllContest($conn){
@@ -185,6 +188,8 @@ function removeBookmark($conn, $userid, $writingid){
 function deleteWriting($conn,$writingid){
   $sql = "DELETE FROM bookmarks WHERE writingid='$writingid'";
   mysqli_query($conn,$sql);
+  $sql = "DELETE FROM topicwriting WHERE wid='$writingid'";
+  mysqli_query($conn,$sql);
   $sql = "DELETE FROM writing WHERE id='$writingid'";
   mysqli_query($conn,$sql);
 }
@@ -246,11 +251,91 @@ function returnDescriptionSubCategory($conn,$subID){
   $description = $row['description'];
   return $description;
 }
-function createTopicInput(){}
+function createTopicInput(){
+//<i class="fa-solid fa-shuffle"></i>
+
+$privacy = "<fieldset>
+<legend>Privacy settings:</legend>
+
+<div>
+  <input type='radio' id='public' value='0' name='audience'
+         checked>
+  <label for='0'>Public</label>
+</div>
+
+<div>
+  <input type='radio' id='private' value='1' name='audience'>
+  <label for='1'>Private</label>
+</div>
+
+<div>
+  <input type='radio' id='anonymous' value='2' name='audience'>
+  <label for='2'>Anonymous</label>
+</div>
+</fieldset>";
+
+$inputbar = "
+<input type='text' size='30' onkeyup='lookupTopic(this.value)' id='topic-input'>
+<div id='livesearch'></div>
+";
 /*
-<div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked="">
-        <label class="form-check-label" for="flexSwitchCheckChecked">Automatically generate topics</label>
-      </div> 
-      */
+$inputbar= "<div class='input-group mb-3'>
+<input type='text' class='form-control' placeholder='Add topic' aria-label='Add topic' aria-describedby='button-addon2'>
+<button class='btn btn-primary' type='button' id='button-addon2'>Add</button>
+</div>";
+*/
+      $html = "<div class='form-check form-switch'>
+        <input class='form-check-input' type='checkbox' id='flexSwitchCheckChecked' onclick='boxClicked()'>
+        <label class='form-check-label' for='flexSwitchCheckChecked'>Automatically generate topics</label>
+      </div> ";
+      $html .= "<div id='topicDiv'>";
+      $html .= $inputbar."
+      <div>
+        <span id='topics-display'></span>
+        <button type='button' class=cleanbutton onclick='generateRandomTopic()'><i class='fa-solid fa-dice'></i></button>
+      </div></div>";
+      $html = "<div class=bottombar>".$html.$privacy."</div>";
+      echo $html;
+
+
+}
+
+function returnTags($conn,$id){
+  $option = "";
+  $sql = "SELECT topic.tid as id,name FROM `topicwriting` join writing on topicwriting.wid=writing.id join topic on topicwriting.tid=topic.tid where wid = $id";
+  $res=mysqli_query($conn, $sql);
+  while($row = mysqli_fetch_assoc($res)){
+    $id = $row['id'];
+    $topic = $row['name'];
+    $option .= "<span class='badge rounded-pill bg-light' onclick='searchByTopic($id)'>$topic</span>";
+  }return $option;
+}
+
+
+
+
+function addTopicArr($conn,$topicArr,$writing_id){
+  foreach($topicArr as $topic){
+    $topic_id = addTopic($conn,$topic);
+    $sql = "insert into topicwriting values ('$writing_id','$topic_id')";
+    $res = mysqli_query($conn,$sql);
+  }
+}
+
+function addTopic($conn,$topic){
+  $id=0;//added topic id
+  $sql = "SELECT tid FROM topic where name = '$topic'";
+  $res = mysqli_query($conn,$sql);
+  if(mysqli_num_rows($res)==0){
+    //topic does not exist
+    $sql2 = "insert into topic (name) value ('$topic')";
+    mysqli_query($conn,$sql2);
+    $id = mysqli_insert_id($conn);
+  }else{
+    //topic does exist
+    $row = mysqli_fetch_assoc($res);
+    $id = $row['tid'];
+  }
+  return $id;
+}
 ?>

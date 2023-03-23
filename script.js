@@ -35,8 +35,8 @@ function toggleBookmark(writing){
     let bookmark = document.getElementById("bookmark").classList.contains('fa-solid');
     xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-    document.getElementById("bookmark").classList.toggle('fa-regular');
-    document.getElementById("bookmark").classList.toggle('fa-solid');
+        document.getElementById("bookmark").classList.toggle('fa-regular');
+        document.getElementById("bookmark").classList.toggle('fa-solid');
         }
     };
     if(bookmark){

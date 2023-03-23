@@ -28,16 +28,19 @@ createTopicInput();
     <div class="d-grid gap-2">
 <?php
     if(isset($_SESSION['name'])) {
-        //place here
-        echo "<button class='btn btn-primary' type='submit' >Publish</button>
-        <button class='btn btn-primary' type='submit' >Save as Draft</button>";
+        //place here 	//0 - publish 1 - anonymous 2 - hidden 3 - draft
+        
+        echo "<input type='hidden' id='hidetopic' name='topics' value=''>";
+         
+        echo "<button class='btn btn-primary' onclick='generateTopics()' type='submit' >Publish</button>";
     }
 ?>
     </div>
 
 </form>
-<?php
 
+<?php
+//<button onclick='test()'>test</button>
 ?>
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 <script type="text/javascript" src="scripts/editor.js"></script>

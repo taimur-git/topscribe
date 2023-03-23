@@ -2,6 +2,8 @@ var simplemde = new SimpleMDE({ element: document.getElementById("simplemde") })
 //simplemde.value();
 const help = document.getElementById("subcategory-help");
 const tooltip = document.querySelector('#tooltip');
+const autoGenBox = document.getElementById("flexSwitchCheckChecked");
+const topicDiv = document.getElementById("topicDiv");
 changeTooltip();
 function changeTooltip(){
     let select = document.getElementById("category-select");
@@ -11,13 +13,7 @@ function changeTooltip(){
     xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
         let description = this.responseText;
-        //let popover = help.data('popover');
-        //help.attr('data-content',description);
-        //popover.setContent();
-//        popover.classList.toggle
-        console.log(description);
         tooltip.innerHTML = description;
-        //document.getElementById("subcategory-help").data-bs-content = this.responseText;
         const popperInstance = Popper.createPopper(help,tooltip,{
             placement: 'right-start',
             modifiers: [
@@ -59,18 +55,75 @@ function show() {
     help.addEventListener(event, hide);
   });
 
+function lookupTopic(value){
+    //where topic like value etc
+}
 
-function initHelp(){
-    let help = document.getElementById("subcategory-help");
+//(autoGenBox.checked)
+function boxClicked(){
+    topicDiv.classList.toggle("hidden");
+}
+const topicsinput = document.getElementById("topic-input");
+topicsinput.addEventListener("keypress",function(event){
+    if (event.key === "Enter") {
+        event.preventDefault();
+        addTopic();
+    }   
+});
+function addTopic(){
+    value = topicsinput.value.toLowerCase().replace(/[^a-z0-9 -]/g, '');;
+    value.trim();
+    if(value!=""){
+        addTopicVal(value);
+        document.getElementById("topic-input").value ="";
+    }
     
 }
-//subcategory-help
-/*
-function getCheckedCheckboxesFor(checkboxName) {
-var checkboxes = document.querySelectorAll('input[name="' + checkboxName + '"]:checked'), values = [];
-Array.prototype.forEach.call(checkboxes, function(el) {
-values.push(el.value);
-});
-return values;
+//
+let topicsSet = new Set();
+function addTopicVal(value){
+    topicsSet.add(value);
+    renderTopics();
 }
-*/
+
+//const topicform = document.getElementById("topic-add");
+//topicform.addEventListener("submit",addTopic);
+function renderTopics(){
+    topics = document.getElementById("topics-display");
+    str ="";
+    topicsSet.forEach(element=>{
+        str += "<span class='badge rounded-pill bg-light' onclick='removeTopic(this.innerText)'>"+element+"</span>";
+    });
+    topics.innerHTML = str;
+}
+function generateRandomTopic(){
+    let arr = "ball";
+    addTopicVal(arr);
+}
+function removeTopic(value){
+    //console.log(value);
+    topicsSet.delete(value);
+    renderTopics();
+}
+function getTopics(){
+    topics = document.getElementById("topics-display");
+}
+function generateTopics(){
+    let hidden = document.getElementById('hidetopic');
+    let val = JSON.stringify([...topicsSet]);//.replaceAll('"','');
+    hidden.value = val;
+    return val;
+}
+
+function test(){
+    let topics = generateTopics();
+    
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        console.log(this.responseText);
+    }
+    };
+    xmlhttp.open("GET","function/test.php?topics="+topics,true);
+    xmlhttp.send();
+}
