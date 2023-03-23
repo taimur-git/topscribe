@@ -30,7 +30,7 @@ function publishWriting($conn, $title,$body,$authorID,$status=0,$subcategoryID=1
 function saveAsDraft($conn, $title,$body,$authorID,$subcategoryID){
     publishWriting($conn, $title,$body,$authorID,3,$subcategoryID);
 }
-function showAllWriting($conn){
+function showAllWriting($conn, $status=0){
     //replace(body,'#*>[]','')
     //concat ...
     //SELECT title, count(userid) FROM `writing` right join `bookmarks` on writing.id=bookmarks.writingid
@@ -40,7 +40,7 @@ function showAllWriting($conn){
     round((length(trim(body))+240)/1440,0) as readtime,
     subcategory.name as subcategory, views
     FROM `writing` join `subcategory` on writing.subcategoryID=subcategory.id
-    where writing.status = 0";
+    where writing.status = $status";
     $res = mysqli_query($conn,$sql);
 while($row = mysqli_fetch_assoc($res)){
     $writeID = $row['id'];
