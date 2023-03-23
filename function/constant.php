@@ -212,4 +212,45 @@ function ifBookmark($conn,$userid,$writingid){
   return mysqli_num_rows($res)!=0;
 }
 
+function createCategorySelect($conn){
+  $sql = "select * from category";
+  $res=mysqli_query($conn, $sql);
+  echo "<label>Select Category:
+  <select name='subcategory' id='category-select' onchange='changeTooltip()'>
+  ";
+  while($row = mysqli_fetch_assoc($res)){
+    $catid = $row['id'];
+    $name = $row['name'];
+    echo "<optgroup label='$name'>";
+    echoSubCategoryOptions($conn, $catid);
+    echo "</optgroup>";
+  }
+  echo "</select></label>";
+  
+}
+
+function echoSubCategoryOptions($conn, $catid){
+  $sql = "select * from subcategory where catid = $catid";
+  $res=mysqli_query($conn, $sql);
+  while($row = mysqli_fetch_assoc($res)){
+    $subid = $row['id'];
+    $name = $row['name'];
+    $option = "<option value='$subid'>$name</option>";
+    echo $option;
+  }
+}
+function returnDescriptionSubCategory($conn,$subID){
+  $sql = "select description from subcategory where id='$subID'";
+  $res = mysqli_query($conn,$sql);
+  $row = mysqli_fetch_assoc($res);
+  $description = $row['description'];
+  return $description;
+}
+function createTopicInput(){}
+/*
+<div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked="">
+        <label class="form-check-label" for="flexSwitchCheckChecked">Automatically generate topics</label>
+      </div> 
+      */
 ?>

@@ -7,5 +7,4 @@
 showAllContest($conn);
 ?>
 
-<script type="text/javascript" src="script.js"></script>
-</body>
+<?php include('partial/footer.php');?>

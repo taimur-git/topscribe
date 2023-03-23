@@ -27,5 +27,4 @@
 
 ?>
 
-<script type="text/javascript" src="scripts/editor.js"></script>
-</body>
+<?php include('partial/footer.php');?>

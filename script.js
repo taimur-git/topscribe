@@ -35,13 +35,8 @@ function toggleBookmark(writing){
     let bookmark = document.getElementById("bookmark").classList.contains('fa-solid');
     xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-if(bookmark){
-    document.getElementById("bookmark").classList.add('fa-regular');
-    document.getElementById("bookmark").classList.remove('fa-solid');
-}else{
-    document.getElementById("bookmark").classList.add('fa-solid');
-    document.getElementById("bookmark").classList.remove('fa-regular');
-}
+    document.getElementById("bookmark").classList.toggle('fa-regular');
+    document.getElementById("bookmark").classList.toggle('fa-solid');
         }
     };
     if(bookmark){

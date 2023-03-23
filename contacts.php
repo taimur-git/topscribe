@@ -19,3 +19,4 @@ dragula([document.getElementById(single)], {
 */
 ?>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/$VERSION/dragula.min.js'></script>
+<?php include('partial/footer.php');?>
