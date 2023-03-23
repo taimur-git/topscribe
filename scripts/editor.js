@@ -97,8 +97,8 @@ function renderTopics(){
     topics.innerHTML = str;
 }
 function generateRandomTopic(){
-    let arr = "ball";
-    addTopicVal(arr);
+    //let arr = "random topic";
+    //addTopicVal(arr);
 }
 function removeTopic(value){
     //console.log(value);
