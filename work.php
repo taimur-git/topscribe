@@ -1,7 +1,6 @@
 <?php
 include('partial/navbar.php');
 ?>
-<body>
 <?php
 $id = $_GET['id'];
 

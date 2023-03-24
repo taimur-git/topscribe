@@ -74,3 +74,4 @@ if (isset($_GET['error'])){
     </div>
   </div>
 </nav>
+<body>

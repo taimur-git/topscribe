@@ -16,10 +16,6 @@
         $data = htmlspecialchars($data);
         return $data;
     }
-/*
-    if(empty($_SESSION['name'])){
-        $_SESSION['name'] = 'Guest';
-    }*/
 //0 - publish 1 - anonymous 2 - hidden 3 - draft
 function publishWriting($conn, $title,$body,$authorID,$status=0,$subcategoryID=19){
     $sql = "insert into writing (title, body, authorID,status,subcategoryID) value ('$title' , '$body', '$authorID','$status','$subcategoryID')";
@@ -31,9 +27,6 @@ function saveAsDraft($conn, $title,$body,$authorID,$subcategoryID){
     publishWriting($conn, $title,$body,$authorID,3,$subcategoryID);
 }
 function showAllWriting($conn, $status=0){
-    //replace(body,'#*>[]','')
-    //concat ...
-    //SELECT title, count(userid) FROM `writing` right join `bookmarks` on writing.id=bookmarks.writingid
     $cards = "<div class='list-group'>";
     $sql = "SELECT writing.id as id,
     title,left(body,430) as blurb,
@@ -54,7 +47,6 @@ while($row = mysqli_fetch_assoc($res)){
     $bookmarks = getBookmarks($conn,$writeID);
 
     $stats = "$views <i class='fa-solid fa-eye'></i> $bookmarks <i class='fa-regular fa-bookmark'></i>";
-//"<a href='work.php?id=$writeID' class='list-group-item list-group-item-action flex-column align-items-start'>
 $cards .= 
 "<a href='work.php?id=$writeID' class='list-group-item list-group-item-action flex-column align-items-start'>
   <div class='d-flex w-100 justify-content-between'>
@@ -98,12 +90,9 @@ function displayWriting($conn,$id){
   </div>
 </div></div>";
 echo $card;
-
-//renderTags($conn,$id);
 }
 
 function showAllContest($conn){
-  //$cards ="";
     $sql = "select contest.id as id, contest.title as title, concat(left(contest.description,100),'...') as blurb, start, end, capacity, subcategory.name as subcategory, category.name as category, count(contestusers.writerID) as registered, usernames.username as host
     from contest join subcategory on contest.subcategoryID = subcategory.id
     join category on subcategory.catID = category.id
@@ -111,13 +100,7 @@ function showAllContest($conn){
     left join contestusers on contest.id = contestusers.contestID
     group by contest.id";
 
-    /*select contest.id as id, contest.title as title, concat(left(contest.description,100),'...') as blurb, start, end, capacity, subcategory.name as subcategory, usernames.username as host
-    from contest join subcategory on contest.subcategoryID = subcategory.id
-    join category on subcategory.catID = category.id
-    join usernames on contest.hostID = usernames.id*/
-//, count(contestusers.writerID) as registered on each
 $res = mysqli_query($conn,$sql);
-//echo $res;
 while($row = mysqli_fetch_assoc($res)){
     $contestID = $row['id'];
     $title = $row['title'];
@@ -153,10 +136,7 @@ $card = "
 </div>
 ";
 echo $card;
-//$cards .= $card;
-
 }
-//echo $cards;
 }
 
 function createContest($conn, $title, $description,$host,$subcategoryID=19,$capacity=null,$start=null,$end=null,$judges=null,$classroom=null){
@@ -259,8 +239,6 @@ function returnDescriptionSubCategory($conn,$subID){
   return $description;
 }
 function createTopicInput(){
-//<i class="fa-solid fa-shuffle"></i>
-
 $privacy = "<fieldset>
 <legend>Privacy settings:</legend>
 
@@ -285,12 +263,7 @@ $inputbar = "
 <input type='text' size='30' onkeyup='lookupTopic(this.value)' id='topic-input'>
 <div id='livesearch'></div>
 ";
-/*
-$inputbar= "<div class='input-group mb-3'>
-<input type='text' class='form-control' placeholder='Add topic' aria-label='Add topic' aria-describedby='button-addon2'>
-<button class='btn btn-primary' type='button' id='button-addon2'>Add</button>
-</div>";
-*/
+
       $html = "<div class='form-check form-switch'>
         <input class='form-check-input' type='checkbox' id='flexSwitchCheckChecked' onclick='boxClicked()'>
         <label class='form-check-label' for='flexSwitchCheckChecked'>Automatically generate topics</label>
@@ -347,15 +320,13 @@ function addTopic($conn,$topic){
 }
 
 function getBookmarks($conn,$writing_id){
-//SELECT title, count(userid) FROM `writing` right join `bookmarks` on writing.id=bookmarks.writingid
-$sql = "select writingid,count(userid) as count from writing join bookmarks on writing.id=bookmarks.writingid group by writingid having writingid='$writing_id'";
-$res = mysqli_query($conn,$sql);
-if(mysqli_num_rows($res)==0){
-  return 0;
-}else{
-  $row = mysqli_fetch_assoc($res);
-  return $row['count'];
-}
-//SELECT writingid,count(userid) FROM `writing` right join `bookmarks` on writing.id=bookmarks.writingid group by writingid having writingid=12
+  $sql = "select writingid,count(userid) as count from writing join bookmarks on writing.id=bookmarks.writingid group by writingid having writingid='$writing_id'";
+  $res = mysqli_query($conn,$sql);
+  if(mysqli_num_rows($res)==0){
+    return 0;
+  }else{
+    $row = mysqli_fetch_assoc($res);
+    return $row['count'];
+  }
 }
 ?>

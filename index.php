@@ -2,7 +2,6 @@
 
 <?php include('partial/navbar.php');?>
 
-<body>
 <!--landing page-->
 <?php
 showAllWriting($conn);

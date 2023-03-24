@@ -2,7 +2,6 @@
 
 <?php include('partial/navbar.php');?>
 
-<body>
 <!--landing page-->
 <form action="function/postContest.php" method="post">
 

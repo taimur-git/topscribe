@@ -1,7 +1,6 @@
 
 <?php include('partial/navbar.php');?>
 
-<body>
 <!--landing page-->
 <?php
 showAllContest($conn);
