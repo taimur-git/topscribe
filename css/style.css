@@ -1,5 +1,4 @@
 
-
 .filter-white{
     width:150px;
     filter: 
@@ -194,4 +193,75 @@ background: linear-gradient(
 }
 #topicDiv{
     transition: display 1s;
+}
+
+.scroll-container,
+.scroll-area {
+  /*max-width: 850px;*/
+  height: 929px;
+  /*font-size: 60px;*/
+}
+
+.scroll-container {
+  overflow: auto;
+  -webkit-scroll-snap-type: y mandatory;
+      -ms-scroll-snap-type: y mandatory;
+          scroll-snap-type: y mandatory;
+}
+
+.scroll-area {
+  scroll-snap-align: start;
+}
+
+.scroll-container,
+.scroll-area {
+  margin: 0 auto;
+}
+
+.scroll-area {
+  /*display: grid;
+  width: 100%;
+  align-items: center;
+  justify-content: center;*/
+  color: white;
+}
+
+.scroll-area:nth-of-type(1) {
+  background-image:url('../images/ladimg3.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  /* background: linear-gradient(
+  180deg,
+  rgba(0,0,0,1) 0%, 
+  rgba(0,0,0,0.7) 50%,
+  rgba(0,0,0,0) 90%);
+  background-size: 100%;
+  background-clip: text;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; 
+  -moz-background-clip: text;
+  -moz-text-fill-color: transparent; */
+}
+
+.landing_heads{
+  font-family: 'Comfortaa', cursive;
+  font-size: 58px;
+  color: #E1E1E1;
+}
+.landing_subs{
+  font-family: 'Comfortaa', cursive;
+  font-size: 30px;
+  color: #E1E1E1;
+}
+.scroll-area:nth-of-type(2) {
+  background: #c94e4b;
+}
+
+.scroll-area:nth-of-type(3) {
+  background: #4cc1be;
+}
+
+.scroll-area:nth-of-type(4) {
+  background: #8360A6;
 }
