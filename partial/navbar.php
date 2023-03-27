@@ -8,11 +8,14 @@
 <!--simpleMDE-->
     <link rel="stylesheet" href="css/simplemde.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa&family=Cormorant+Garamond&family=Lobster&family=Taviraj&display=swap" rel="stylesheet">
     
 
 </head>
-
-
+   
 <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
@@ -28,10 +31,10 @@
 ?>
 
     </a>
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -74,4 +77,3 @@ if (isset($_GET['error'])){
     </div>
   </div>
 </nav>
-<body>
