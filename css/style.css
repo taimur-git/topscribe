@@ -275,6 +275,7 @@ background: linear-gradient(
   width: 10%;
   float: left;
   padding-left: 2%;
+  padding-top: 2%;
 }
 .article-preview{
   width: 90%;
@@ -285,4 +286,31 @@ background: linear-gradient(
 }
 .article-link{
   border:none;
+}
+.drag-section{
+  width:10%;
+  display: table-cell;
+}
+.drag-section > div {
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+  margin: 10px;
+padding: 10px;
+background-color: rgba(0, 0, 0, 0.2);
+transition: opacity 0.4s ease-in-out;
+}
+.wrapper {
+  display: table;
+}
+.contact-image{
+  float:left;
+  width: 14%;
+}
+.contact-name{
+
+}
+.contact-header{
+  padding: 5%;
 }

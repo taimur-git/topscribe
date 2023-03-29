@@ -342,8 +342,27 @@ function addContact($conn,$user1,$user2){
   mysqli_query($conn,$sql);
 }
 function viewContacts($conn,$user){
-  $sql = "select user2id as id, from contacts join usernames on  where user1id='$user'";
-
+  $sql = "select user2id as id, u2.username as friend, u2.photo as photo from 
+  contacts join usernames u1 on user1id = u1.id 
+  join usernames u2 on user2id = u2.id where user1id='$user'";
+  $contactList = "<div id='left' class='contact-list drag-section'>
+  <h1 class='contact-header'>CONTACTS</h1>";
+  $res=mysqli_query($conn, $sql);
+  while($row = mysqli_fetch_assoc($res)){
+    $id = $row['id'];
+    $friend = $row['friend'];
+    $imgurl = $row['photo'];
+    
+    $contact = "<div><div class='contact-image'>
+    <img class='profile-pic' src='$imgurl'>
+    </div>
+    <div class='contact-name'>
+    <h5>$friend</h5>
+    </div></div>";
+    $contactList.=$contact;
+  }
+$contactList .= "</div>";
+echo $contactList;
 }
 function addContactToGroup(){}
 ?>
