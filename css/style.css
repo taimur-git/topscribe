@@ -146,7 +146,7 @@ background: linear-gradient(
   }
 
   #tooltip[data-show] {
-    display: block;
+    display: block !important;
   }
 
   #arrow,
@@ -264,4 +264,9 @@ background: linear-gradient(
 
 .scroll-area:nth-of-type(4) {
   background: #8360A6;
+}
+
+#editor-body{
+  width: 68%;
+  margin-left: 1%;
 }

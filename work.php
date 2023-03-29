@@ -1,6 +1,8 @@
 <?php
 include('partial/navbar.php');
 ?>
+<link rel="stylesheet" href="css/work.css">
+
 <?php
 $id = $_GET['id'];
 
@@ -34,10 +36,12 @@ data-bs-placement='bottom' data-bs-content='$url' onclick='copyToClipboard()'>
 echo "<button type='button' class=cleanbutton onclick='downloadPDF()'><i class='fa-solid fa-download'></i></button>";
 $topics = returnTags($conn,$id);
 echo "<p>$topics</p>";
-
+echo "<div id='particles-js'></div>";
 echo "</div>";
 
 
 ?>
-
+<script src="scripts/particles.min.js"></script>
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script type="text/javascript" src="scripts/work.js"></script>
 <?php include('partial/footer.php');?>

@@ -1,0 +1,7 @@
+.editor-preview, .editor-preview-side {
+    background: #fff !important;
+  }
+  
+  .CodeMirror {
+    border: 1px none #ddd !important;
+  }

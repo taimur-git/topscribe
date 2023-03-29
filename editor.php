@@ -13,8 +13,9 @@
     ?>
     <button type='button' id='subcategory-help' class='cleanbutton' aria-describedby="tooltip"><i class='fa-solid fa-question'></i></button>
     <div id='tooltip' role='tooltip'><div id="arrow" data-popper-arrow></div></div>
-    <textarea name='body' id='simplemde'></textarea>
-
+    <div id="editor-body">
+        <textarea name='body' id='simplemde'></textarea>
+    </div>
 
 <?php
 

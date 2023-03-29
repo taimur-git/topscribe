@@ -86,7 +86,7 @@ function displayWriting($conn,$id){
   <div class='card-body'>
     <h4 class='card-title'>$title</h4>
     <h6 class='card-subtitle mb-2 text-muted'>$date</h6>
-    <p class='card-text'>$body</p>
+    <textarea class='card-text' id='simplemde'>$body</textarea>
   </div>
 </div></div>";
 echo $card;
@@ -329,4 +329,14 @@ function getBookmarks($conn,$writing_id){
     return $row['count'];
   }
 }
+
+function addContact($conn,$user1,$user2){
+  $sql = "insert into contacts value ('$user1','$user2')";
+  mysqli_query($conn,$sql);
+}
+function viewContacts($conn,$user){
+  $sql = "select user2id as id, from contacts join usernames on  where user1id='$user'";
+
+}
+function addContactToGroup(){}
 ?>
