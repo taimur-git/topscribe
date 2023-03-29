@@ -28,11 +28,12 @@ function saveAsDraft($conn, $title,$body,$authorID,$subcategoryID){
 }
 function showAllWriting($conn, $status=0){
     $cards = "<div class='list-group'>";
-    $sql = "SELECT writing.id as id,
+    $sql = "SELECT usernames.username as author, usernames.photo as photo, writing.id as id,
     title,left(body,430) as blurb,
     round((length(trim(body))+240)/1440,0) as readtime,
     subcategory.name as subcategory, views
     FROM `writing` join `subcategory` on writing.subcategoryID=subcategory.id
+    join usernames on usernames.id=writing.authorID
     where writing.status = $status";
     $res = mysqli_query($conn,$sql);
 while($row = mysqli_fetch_assoc($res)){
@@ -45,10 +46,16 @@ while($row = mysqli_fetch_assoc($res)){
     $topics = returnTags($conn,$writeID);
     $views = $row['views'];
     $bookmarks = getBookmarks($conn,$writeID);
+  $author = $row['author'];
+  $imgurl = $row['photo'];//check if null then default
+  
+  //return $author;
+  $profileView =  "<div class='side-profile'><img class='profile-pic' src='$imgurl'>";
+  $profileView .= "<h5>$author</h5></div>";
 
     $stats = "$views <i class='fa-solid fa-eye'></i> $bookmarks <i class='fa-regular fa-bookmark'></i>";
 $cards .= 
-"<a href='work.php?id=$writeID' class='list-group-item list-group-item-action flex-column align-items-start'>
+"<div class='full-article'>$profileView<div class='article-preview'><a href='work.php?id=$writeID' class='article-link list-group-item list-group-item-action flex-column align-items-start'>
   <div class='d-flex w-100 justify-content-between'>
     <h5 class='mb-1'>$title</h5>
     <small>$readtime</small>
@@ -59,7 +66,7 @@ $cards .=
   <span>$stats</span>
   </div>
   
-</a>";
+</a></div></div>";
 }
     $cards.='</div>';
 

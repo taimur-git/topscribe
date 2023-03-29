@@ -42,7 +42,7 @@
             <li><a class="nav-link" aria-current="page" href="editor.php">Editor</a></li>
             <li><a class="nav-link" aria-current="page" href="browse.php">Browse</a></li>
             <li><a class="nav-link" aria-current="page" href="discover.php">Discover</a></li>
-            <li><a class="nav-link" aria-current="page" href="#">Search</a></li>
+            <li><a class="nav-link" aria-current="page" href="contacts.php">Contacts</a></li>
         </ul>
     
 <?php

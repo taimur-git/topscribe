@@ -270,3 +270,19 @@ background: linear-gradient(
   width: 68%;
   margin-left: 1%;
 }
+
+.side-profile{
+  width: 10%;
+  float: left;
+  padding-left: 2%;
+}
+.article-preview{
+  width: 90%;
+  float: left;
+}
+.full-article{
+  width: 50%;
+}
+.article-link{
+  border:none;
+}
