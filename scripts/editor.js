@@ -1,5 +1,5 @@
 var simplemde = new SimpleMDE({ element: document.getElementById("simplemde") });
-//simplemde.value();
+
 const help = document.getElementById("subcategory-help");
 const tooltip = document.querySelector('#tooltip');
 const autoGenBox = document.getElementById("flexSwitchCheckChecked");
@@ -54,11 +54,6 @@ function show() {
   hideEvents.forEach((event) => {
     help.addEventListener(event, hide);
   });
-
-function lookupTopic(value){
-    //where topic like value etc
-}
-
 //(autoGenBox.checked)
 function boxClicked(){
     topicDiv.classList.toggle("hidden");
@@ -86,8 +81,6 @@ function addTopicVal(value){
     renderTopics();
 }
 
-//const topicform = document.getElementById("topic-add");
-//topicform.addEventListener("submit",addTopic);
 function renderTopics(){
     topics = document.getElementById("topics-display");
     str ="";
@@ -101,7 +94,6 @@ function generateRandomTopic(){
     //addTopicVal(arr);
 }
 function removeTopic(value){
-    //console.log(value);
     topicsSet.delete(value);
     renderTopics();
 }
@@ -110,14 +102,13 @@ function getTopics(){
 }
 function generateTopics(){
     let hidden = document.getElementById('hidetopic');
-    let val = JSON.stringify([...topicsSet]);//.replaceAll('"','');
+    let val = JSON.stringify([...topicsSet]);
     hidden.value = val;
     return val;
 }
 
 function test(){
     let topics = generateTopics();
-    
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {

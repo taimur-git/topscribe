@@ -5,7 +5,7 @@ include('constant.php');
 	$pass = validate($_POST['password']);
     $c_pass= validate($_POST['c_password']);
     $imgurl = $_POST['imgurl'];
-
+    if($imgurl==null){$imgurl="images/blank.jpg";}
     if($pass !== $c_pass){
         header("Location: ../registration.php?error=Password is not same");
 	    exit();

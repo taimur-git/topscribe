@@ -13,14 +13,12 @@ function updateContactToGroup(gid,uid,remove=false){
 }
 
 function updateGroup(gid,val){
-  //let name = document.getElementById('group-name').value;
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
   if (this.readyState == 4 && this.status == 200) {
-      console.log(this.responseText);
-      //window.location.reload();
     }
   };
+  //problem: it doesnt properly remove an item. sometimes after moving an item it delete its even though it snaps back to place.
   xmlhttp.open("GET","function/updateGroup.php?gid="+gid+"&garray="+val,true);
   xmlhttp.send();
 }
@@ -29,8 +27,6 @@ function updateGroupName(gid,groupname){
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
   if (this.readyState == 4 && this.status == 200) {
-      console.log(this.responseText);
-      //window.location.reload();
     }
   };
   xmlhttp.open("GET","function/updateGroupName.php?gid="+gid+"&groupname="+groupname,true);
@@ -86,7 +82,6 @@ window.onload = function() {
       }
     });
 }
-//attributes.uid.value
 function addGroup(){
   let name = document.getElementById('group-name').value;
   var xmlhttp = new XMLHttpRequest();
@@ -111,7 +106,3 @@ function removeGroup(gid){
   xmlhttp.open("GET","function/removeGroup.php?gid="+gid,true);
   xmlhttp.send();
 }
-/*
-let returnArray = document.getElementById('contact-array');
-returnArray.value = "";
-*/
