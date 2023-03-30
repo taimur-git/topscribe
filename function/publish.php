@@ -15,6 +15,6 @@ include('constant.php');
 	//0 - publish 1 - anonymous 2 - hidden 3 - draft
     $writing_id = publishWriting($conn,$title,$body,$authorID,$privacy,$subcategory);
     addTopicArr($conn,$topicArr,$writing_id);
-    header("Location: ../index.php");
-    //header("Location: ../index.php?id=$writing_id");
+    //header("Location: ../index.php");
+    header("Location: ../work.php?id=$writing_id");
 ?>

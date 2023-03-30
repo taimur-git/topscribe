@@ -345,7 +345,7 @@ function viewContacts($conn,$user){
   $sql = "select user2id as id, u2.username as friend, u2.photo as photo from 
   contacts join usernames u1 on user1id = u1.id 
   join usernames u2 on user2id = u2.id where user1id='$user'";
-  $contactList = "<div id='left' class='contact-list drag-section'>
+  $contactList = "<div id='left' gid=0 class='contact-list drag-section'>
   <h1 class='contact-header'>CONTACTS</h1>";
   $res=mysqli_query($conn, $sql);
   while($row = mysqli_fetch_assoc($res)){
@@ -353,16 +353,86 @@ function viewContacts($conn,$user){
     $friend = $row['friend'];
     $imgurl = $row['photo'];
     
-    $contact = "<div><div class='contact-image'>
-    <img class='profile-pic' src='$imgurl'>
-    </div>
-    <div class='contact-name'>
-    <h5>$friend</h5>
-    </div></div>";
+    $contact = createContactString($id,$imgurl,$friend);
     $contactList.=$contact;
   }
 $contactList .= "</div>";
 echo $contactList;
 }
-function addContactToGroup(){}
+function addContactsToGroup($conn,$gid,$garray){
+  //INSERT INTO `grouplist` (`groupID`, `userID`) VALUES ('8', '3'); 
+  $sql = "DELETE FROM grouplist WHERE groupID = '$gid'";
+  $res = mysqli_query($conn,$sql);
+  foreach($garray as $uid){
+    $sql = "insert into grouplist value ('$gid','$uid')";
+    $res = mysqli_query($conn,$sql);
+  }
+}
+
+function addGroup($conn,$name,$owner,$judge=0){
+  $sql = "insert into userlist (groupName,ownerID,judge) value ('$name','$owner','$judge')";
+  mysqli_query($conn,$sql);
+  $id = mysqli_insert_id($conn);
+  return $id;
+}
+
+function viewGroups($conn,$user){
+//  $sql = "SELECT grouplist.groupID as gid,userlist.groupName as groupname, grouplist.userID as id,usernames.username as friend, usernames.photo as photo FROM grouplist join userlist on grouplist.groupID=userlist.groupID 
+//  join usernames on grouplist.userID = usernames.id
+//  where ownerID='$user'";
+
+$groupList =''; 
+  $sql = "select groupID as gid,groupName from userlist where ownerID='$user'";
+  $res=mysqli_query($conn, $sql);
+  while($row = mysqli_fetch_assoc($res)){
+    $garray = array();
+    $gid = $row['gid'];
+    $groupname = $row['groupName'];
+    $groupList.= "<div id='right$gid' gid='$gid' class='drag-section'>";
+
+    //$groupList .= "<h3 class='contact-header'>$groupname</h3>";
+    $groupList .= "<input type=text class='borderless2' onchange='updateGroupName($gid,this.value)' value='$groupname'></input>";
+
+    $sql2 = "select groupList.userID as id,usernames.username as friend, usernames.photo as photo from groupList join usernames on groupList.userID = usernames.id where groupList.groupID=$gid";
+    $res2 = mysqli_query($conn, $sql2);
+    while($row2 = mysqli_fetch_assoc($res2)){
+      $id = $row2['id'];
+      $friend = $row2['friend'];
+      $imgurl = $row2['photo'];
+      array_push($garray,intval($id));
+      $contact = createContactString($id,$imgurl,$friend);
+      $groupList.=$contact;
+    }
+    $garrstring = json_encode($garray);
+    $groupList.="<input type=hidden id='contact-array$gid' value='$garrstring'>";
+    $groupList.="<button class='cleanbutton' id='remove-group' onclick='removeGroup($gid)'><i class='fa-solid fa-trash'></i></button></div>";
+  }
+  echo $groupList;
+
+
+}
+
+function createContactString($id,$imgurl,$friend){
+  return "<div class='draggable' uid=$id><div class='contact-image'>
+      <img class='profile-pic' src='$imgurl'>
+      </div>
+      <div class='contact-name'>
+      <h5>$friend</h5>
+      </div></div>";
+}
+
+function removeGroup($conn,$gid){
+//first you clear out the grouplist
+$sql = "DELETE FROM grouplist WHERE groupID = '$gid'";
+mysqli_query($conn,$sql);
+$sql = "DELETE FROM userlist WHERE groupID = '$gid'";
+mysqli_query($conn,$sql);
+//then you clear out the userlist
+}
+
+function updateGroupName($conn,$gid,$groupname){
+  $sql = "UPDATE `userlist` SET `groupName` = '$groupname' WHERE `userlist`.`groupID` = '$gid'";
+  mysqli_query($conn,$sql);
+}
+
 ?>
