@@ -41,8 +41,9 @@
             <li><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
             <li><a class="nav-link" aria-current="page" href="editor.php">Editor</a></li>
             <li><a class="nav-link" aria-current="page" href="browse.php">Browse</a></li>
-            <li><a class="nav-link" aria-current="page" href="discover.php">Discover</a></li>
+            <li><a class="nav-link" aria-current="page" href="discover.php">Create</a></li>
             <li><a class="nav-link" aria-current="page" href="contacts.php">Contacts</a></li>
+            <li><a class="nav-link" aria-current="page" href="users.php">Users</a></li>
         </ul>
     
 <?php

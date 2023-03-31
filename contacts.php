@@ -4,26 +4,9 @@
 <?php 
 $user = $_SESSION['id'];
 viewContacts($conn,$user);
-//limit 4 groups per user.
+//limit 4 groups per user?
 viewGroups($conn,$user);
 ?>
-
-<!--div id='right' class='drag-section'>
-  <div class='draggable'>test3</div>
-</div>
-
-<div id='right1' class='drag-section'>
-  <div class='draggable'>test4</div>
-</div>
-
-<div id='right2' class='drag-section'>
-  <div class='draggable'>test3</div>
-</div-->
-
-
-
-
-
 </div>
 <div>
   <label for=group></label>
@@ -31,6 +14,7 @@ viewGroups($conn,$user);
   <button type='button' class=cleanbutton onclick='addGroup()'><i class='fa-solid fa-plus'></i></button>
 </div>
 
+
+<?php include('partial/footer.php');?>
 <script src='scripts/dragula.min.js'></script>
 <script src='scripts/contacts.js'></script>
-<?php include('partial/footer.php');?>

@@ -41,7 +41,6 @@ echo "</div>";
 
 
 ?>
-<script src="scripts/particles.min.js"></script>
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-<script type="text/javascript" src="scripts/work.js"></script>
 <?php include('partial/footer.php');?>
+
+<script type="text/javascript" src="scripts/work.js"></script>

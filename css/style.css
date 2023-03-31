@@ -335,3 +335,36 @@ transition: opacity 0.4s ease-in-out;
 #remove-group{
   padding: 5%;
 }
+
+.contest-editor-body{
+  float: left;
+}
+#contest-inputs{
+  width: 30%;
+float: left;
+/*margin-top:9%;*/
+margin-left:1%;
+}
+
+#contest-inputs > *{
+  margin-top: 5%;
+}
+
+#contest-editor-banner{
+  margin:0;
+}
+
+#contest-editor-banner>img{
+  width:95%;
+}
+#banner-img{
+  height:194px;
+  /*width:542px;*/
+}
+
+#banner-url {
+	margin-bottom: 1%;
+	padding: 0;
+	font-size: 1.1rem;
+	padding-left: 1%;
+}

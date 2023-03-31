@@ -29,9 +29,7 @@ createTopicInput();
 <?php
     if(isset($_SESSION['name'])) {
         //place here 	//0 - publish 1 - anonymous 2 - hidden 3 - draft
-        
         echo "<input type='hidden' id='hidetopic' name='topics' value=''>";
-         
         echo "<button class='btn btn-primary' onclick='generateTopics()' type='submit' >Publish</button>";
     }
 ?>
@@ -40,8 +38,9 @@ createTopicInput();
 </form>
 
 <?php
-//<button onclick='test()'>test</button>
+//<button onclick='test()'>test</button><script src="scripts/simplemde.min.js"></script>
 ?>
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-<script type="text/javascript" src="scripts/editor.js"></script>
+
+
 <?php include('partial/footer.php');?>
+<script type="text/javascript" src="scripts/editor.js"></script>

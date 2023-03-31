@@ -16,6 +16,7 @@
         $data = htmlspecialchars($data);
         return $data;
     }
+    $currentDateTime = date("Y-m-d H:i");
 //0 - publish 1 - anonymous 2 - hidden 3 - draft
 function publishWriting($conn, $title,$body,$authorID,$status=0,$subcategoryID=19){
     $sql = "insert into writing (title, body, authorID,status,subcategoryID) value ('$title' , '$body', '$authorID','$status','$subcategoryID')";
@@ -146,15 +147,15 @@ echo $card;
 }
 }
 
-function createContest($conn, $title, $description,$host,$subcategoryID=19,$capacity=null,$start=null,$end=null,$judges=null,$classroom=null){
+function createContest($conn, $title, $description,$host,$subcategoryID=19,$capacity=null,$start=null,$end=null,$judges=null,$classroom=null,$bannerURL="images/banner.png"){
   $sql = $start==null ? 
   "insert into contest
   (title, description,hostID,subcategoryID)
   value ('$title' , '$description','$host','$subcategoryID')"
   : 
   "insert into contest
-  (title, description, start,end,capacity,judgeGroup,writerGroup,hostID,accepted,subcategoryID)
-  value ('$title' , '$description', '$start','$end','$capacity','$judgeGroup','$writerGroup','$host','$accepted','$subcategoryID')" ;
+  (title, description, start,end,capacity,judgeGroup,writerGroup,hostID,accepted,subcategoryID,bannerurl)
+  value ('$title' , '$description', '$start','$end','$capacity','$judgeGroup','$writerGroup','$host','$accepted','$subcategoryID','$bannerURL')" ;
 
     mysqli_query($conn,$sql);
     $contest_id = mysqli_insert_id($conn);
@@ -214,7 +215,7 @@ function ifBookmark($conn,$userid,$writingid){
 function createCategorySelect($conn){
   $sql = "select * from category";
   $res=mysqli_query($conn, $sql);
-  echo "<label>Select Category:
+  echo "<label for='category-select'>Select Category:
   <select name='subcategory' id='category-select' onchange='changeTooltip()'>
   ";
   while($row = mysqli_fetch_assoc($res)){
@@ -225,7 +226,26 @@ function createCategorySelect($conn){
     echo "</optgroup>";
   }
   echo "</select></label>";
-  
+}
+
+function createGroupSelect($conn,$user,$judge=false){
+  //judge false means studentgroup, true means judge
+  $sql = "select * from userlist where ownerID='$user'";
+  //$sql .= $judge?" and judge=1":" judge=0";
+  $res=mysqli_query($conn, $sql);
+  echo "<label>Select ";
+  echo $judge?"judge panel:":"students: ";
+  echo "<select name= ";
+  echo $judge?"'judge' id='judge-select' ":"'student' id='student-select' ";
+  echo "><option value='0'>--empty--</option>";
+  while($row = mysqli_fetch_assoc($res)){
+    $groupID = $row['groupID'];
+    $name = $row['groupName'];
+    $option = "<option value='$groupID'>$name</option>";
+    echo $option;
+  }
+  echo "</select></label>";
+
 }
 
 function echoSubCategoryOptions($conn, $catid){
@@ -434,5 +454,62 @@ function updateGroupName($conn,$gid,$groupname){
   $sql = "UPDATE `userlist` SET `groupName` = '$groupname' WHERE `userlist`.`groupID` = '$gid'";
   mysqli_query($conn,$sql);
 }
+//
+
+function renderContestEditorBanner($startTime=0,$endTime=0,$banner="images/banner.png"){
+  if($startTime==0){
+    $startTime = date("Y-m-d H:i");
+  }
+  if($endTime==0){
+    $endTime = date("Y-m-d H:i");
+  }
+  $str = "  <div id='contest-editor-banner'>
+  <h3 style='display:inline;'>Banner</h3>
+  <input type='text' id='banner-url' name='banner-url' placeholder='Optional: Banner URL'>
+  <img id='banner-img' src='$banner'>
+</div>
+
+<label for='start-time'>Start Time:</label>
+
+<input type='datetime-local' id='start-time'
+ name='start-time' value='$startTime'
+ min='$startTime'>
+
+ <br>
+<label for='deadline'>Deadline:</label>
+
+<input type='datetime-local' id='deadline'
+ name='deadline' value='$endTime'
+ min='$endTime'>
+
+ <br>
+ <label for='deadline'>Capacity (optional):</label>
+ <input type='number' name='capacity' placeholder='0' min=0>
+ <br>";
+echo $str;
+return $str;
+}
+
+
+function showAllUsers($conn){
+//show all users.
+//createContactString($id,$imgurl,$friend)
+/*
+  return "<div class='draggable' uid=$id><div class='contact-image'>
+      <img class='profile-pic' src='$imgurl'>
+      </div>
+      <div class='contact-name'>
+      <h5>$friend</h5>
+      </div></div>";
+ */
+}
+function showAllUsersForUser($conn,$user){
+//check if user has person added.
+//if added, then will show unadd button
+//if not added, then will show add button
+
+}
 
 ?>
+
+

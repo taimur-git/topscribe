@@ -21,9 +21,6 @@ getWritingInfo($conn,$id);
 createTopicInput();
 //createTopicFromID($conn,$id);
 ?>
-
-
-
     <div class="d-grid gap-2">
 <?php
     if(isset($_SESSION['name'])) {
@@ -32,7 +29,6 @@ createTopicInput();
         echo "<input type='hidden' id='hidetopic' name='topics' value='$something'>";
          
         echo "<button class='btn btn-primary' onclick='updateTopics()' type='submit' >Update</button>";
-        //check init topics, if there are changes, update the topics.
     }
 ?>
     </div>
@@ -41,6 +37,7 @@ createTopicInput();
 
 
 
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-<script type="text/javascript" src="scripts/editor.js"></script>
+
+
 <?php include('partial/footer.php');?>
+<script type="text/javascript" src="scripts/editor.js"></script>
