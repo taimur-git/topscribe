@@ -101,7 +101,7 @@ echo $card;
 }
 
 function showAllContest($conn){
-    $sql = "select contest.id as id, contest.title as title, concat(left(contest.description,100),'...') as blurb, start, end, capacity, subcategory.name as subcategory, category.name as category, count(contestusers.writerID) as registered, usernames.username as host
+    $sql = "select contest.bannerurl as photo, contest.id as id, contest.title as title, concat(left(contest.description,100),'...') as blurb, start, end, capacity, subcategory.name as subcategory, category.name as category, count(contestusers.writerID) as registered, usernames.username as host
     from contest join subcategory on contest.subcategoryID = subcategory.id
     join category on subcategory.catID = category.id
     join usernames on contest.hostID = usernames.id
@@ -120,6 +120,7 @@ while($row = mysqli_fetch_assoc($res)){
     $category = $row['category'];
     $registered = $row['registered'];
     $host = $row['host'];
+    $bannerurl = $row['photo'];
     
 //div class = row
 //div class = col lg 4
@@ -128,6 +129,10 @@ while($row = mysqli_fetch_assoc($res)){
     //and the card body could be white for contests, black for requests?
 $card = "
     <div class='card mb-3 contestcard'>
+
+    <img class='card-img-top contest-banner' src='$bannerurl'' alt='contest banner'>
+
+
   <h3 class='card-header'>$title</h3>
   <div class='card-body'>
     <h5 class='card-title'>$subcategory</h5>
@@ -155,7 +160,7 @@ function createContest($conn, $title, $description,$host,$subcategoryID=19,$capa
   : 
   "insert into contest
   (title, description, start,end,capacity,judgeGroup,writerGroup,hostID,accepted,subcategoryID,bannerurl)
-  value ('$title' , '$description', '$start','$end','$capacity','$judgeGroup','$writerGroup','$host','$accepted','$subcategoryID','$bannerURL')" ;
+  value ('$title' , '$description', '$start','$end','$capacity','$judges','$classroom','$host','$accepted','$subcategoryID','$bannerURL')" ;
 
     mysqli_query($conn,$sql);
     $contest_id = mysqli_insert_id($conn);
@@ -465,7 +470,7 @@ function renderContestEditorBanner($startTime=0,$endTime=0,$banner="images/banne
   }
   $str = "  <div id='contest-editor-banner'>
   <h3 style='display:inline;'>Banner</h3>
-  <input type='text' id='banner-url' name='banner-url' placeholder='Optional: Banner URL'>
+  <input type='text' id='banner-url' name='banner-url' onchange='changeBannerImg()' placeholder='Optional: Banner URL'>
   <img id='banner-img' src='$banner'>
 </div>
 
@@ -489,25 +494,37 @@ function renderContestEditorBanner($startTime=0,$endTime=0,$banner="images/banne
 echo $str;
 return $str;
 }
-
+function printUserCard($id,$name,$photo,$loggedin=false,$added=false){
+  $card = "<div class='card profile-card'>
+    <img src='$photo' class='card-img-top square-img'>
+    <div class='card-body'>
+      <h5 class='card-title'>$name</h5>";
+      if($loggedin){
+        $card.=$added?"<button class=cleanbutton onclick='removeContact($id)'><i class='fa-solid fa-user-minus'></i></button>":"<button class=cleanbutton onclick='addContact($id)'><i class='fa-solid fa-user-plus'></i></button>";
+      }
+    $card .="</div>
+  </div>";
+  return $card;
+}
 
 function showAllUsers($conn){
-//show all users.
-//createContactString($id,$imgurl,$friend)
-/*
-  return "<div class='draggable' uid=$id><div class='contact-image'>
-      <img class='profile-pic' src='$imgurl'>
-      </div>
-      <div class='contact-name'>
-      <h5>$friend</h5>
-      </div></div>";
- */
+  $sql = "select * from usernames";
+  $res=mysqli_query($conn, $sql);
+  while($row = mysqli_fetch_assoc($res)){
+    $id = $row['id'];
+    $name = $row['username'];
+    $photo = $row['photo'];
+    //check if current user is connected to session
+$str = printUserCard($id,$name,$photo,true);
+    echo $str;
+  }
+
 }
 function showAllUsersForUser($conn,$user){
 //check if user has person added.
 //if added, then will show unadd button
 //if not added, then will show add button
-
+showAllUsers($conn);
 }
 
 ?>

@@ -1,8 +1,12 @@
 const help = document.getElementById("subcategory-help");
 const deadline = document.getElementById("deadline");
 const starttime = document.getElementById("start-time");
-const bannerurl = document.getElementById("banner-url");
-const bannerimg = document.getElementById("banner-img");
+console.log("https://static.vecteezy.com/system/resources/previews/000/382/407/original/vector-beautiful-creative-wave-banner-template-design.jpg");
+console.log("https://static.vecteezy.com/system/resources/previews/000/664/622/original/abstract-banner-design-vector.jpg");
+console.log("https://static.vecteezy.com/system/resources/previews/000/381/578/original/vector-abstract-colorful-wave-banner-background.jpg");
+function changeBannerImg(){
+  document.getElementById("banner-img").src = document.getElementById("banner-url").value;
+}
 const tooltip = document.querySelector('#tooltip');
 var simplemde = new SimpleMDE({ 
     element: document.getElementById("simplemde"),

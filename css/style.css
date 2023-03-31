@@ -76,6 +76,7 @@ background: linear-gradient(
 .profile-pic{
     clip-path: circle(40%);
     width: 50%;
+    aspect-ratio: 1/1;
 }
 
 #bookmark{
@@ -359,7 +360,12 @@ margin-left:1%;
 }
 #banner-img{
   height:194px;
+  aspect-ratio: 14/5;
   /*width:542px;*/
+}
+
+.contest-banner{
+  aspect-ratio: 14/5;
 }
 
 #banner-url {
@@ -367,4 +373,14 @@ margin-left:1%;
 	padding: 0;
 	font-size: 1.1rem;
 	padding-left: 1%;
+}
+
+.profile-card{
+  width: 18rem;
+  float:left;
+  margin: 1%;
+}
+
+.square-img{
+  aspect-ratio: 1/1;
 }
