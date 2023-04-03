@@ -19,7 +19,8 @@ if(isset($_SESSION['name'])) {
     //landing page
     include('partial/landing.php');
 }
-      include('partial/footer.php');?>
+
+include('partial/footer.php');?>
     
 
 
