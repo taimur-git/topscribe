@@ -38,12 +38,16 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <?php if($id != 0 ){?>
             <li><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
             <li><a class="nav-link" aria-current="page" href="editor.php">Editor</a></li>
             <li><a class="nav-link" aria-current="page" href="browse.php">Browse</a></li>
             <li><a class="nav-link" aria-current="page" href="discover.php">Create</a></li>
             <li><a class="nav-link" aria-current="page" href="contacts.php">Contacts</a></li>
             <li><a class="nav-link" aria-current="page" href="users.php">Users</a></li>
+            <?php }else{?>
+                <h1>admin</h1>
+            <?php }?>
         </ul>
     
 <?php

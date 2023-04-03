@@ -7,9 +7,14 @@
 //showAllWriting($conn);
 
 if(isset($_SESSION['name'])) {
-    //place here
+    if($_SESSION['id']==0){
+        //admin
+        include('admin/home.php');
+    }else{
+        //place here
     //user page
-    showAllWriting($conn);
+        showAllWriting($conn);
+    }
 }else{
     //landing page
     include('partial/landing.php');
