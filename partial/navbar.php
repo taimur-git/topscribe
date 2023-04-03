@@ -16,7 +16,7 @@
 
 </head>
    
-<nav class="navbar navbar-expand-lg bg-primary navbar-dark">
+<nav class="navbar navbar-expand-lg bg-primary navbar-dark nav-height">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
     <img src="images/logo.svg" alt="Logo" class="d-inline-block align-text-top filter-white">
