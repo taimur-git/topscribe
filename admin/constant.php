@@ -33,8 +33,26 @@ function viewContests(){
 
 
 
+function countUser($conn){
+    $sql="SELECT COUNT(id) AS total FROM usernames";
+    $query = mysqli_query($conn,$sql);
+    $value = mysqli_fetch_assoc($query);
+    echo($value['total']);
+}
 
+function countContest($conn){
+    $sql="SELECT COUNT(id) AS total FROM contest WHERE accepted = 1";
+    $query = mysqli_query($conn,$sql);
+    $value = mysqli_fetch_assoc($query);
+    echo($value['total']);
+}
 
+function countArticle($conn){
+    $sql="SELECT COUNT(id) AS total FROM writing ";
+    $query = mysqli_query($conn,$sql);
+    $value = mysqli_fetch_assoc($query);
+    echo($value['total']);
+}
 
 
 

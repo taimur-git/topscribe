@@ -41,20 +41,27 @@
 
         <?php if(!isset($_SESSION['name'])){?>
         <!--guest view-->
-        <li><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
-            <li><a class="nav-link" aria-current="page" href="editor.php">Editor</a></li>
-            <li><a class="nav-link" aria-current="page" href="browse.php">Browse</a></li>
-            <?php }else if($_SESSION['id'] != 0){ ?>
+                <li><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
+                <li><a class="nav-link" aria-current="page" href="editor.php">Editor</a></li>
+                <li><a class="nav-link" aria-current="page" href="browse.php">Browse</a></li>
+            <?php }
+            else if($_SESSION['id'] != 0){ ?>
                 <!--user view-->
-            <li><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
-            <li><a class="nav-link" aria-current="page" href="editor.php">Editor</a></li>
-            <li><a class="nav-link" aria-current="page" href="browse.php">Browse</a></li>
-            <li><a class="nav-link" aria-current="page" href="discover.php">Create</a></li>
-            <li><a class="nav-link" aria-current="page" href="contacts.php">Contacts</a></li>
-            <li><a class="nav-link" aria-current="page" href="users.php">Users</a></li>
-            <?php }else{?>
+                <li><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
+                <li><a class="nav-link" aria-current="page" href="editor.php">Editor</a></li>
+                <li><a class="nav-link" aria-current="page" href="browse.php">Browse</a></li>
+                <li><a class="nav-link" aria-current="page" href="discover.php">Create</a></li>
+                <li><a class="nav-link" aria-current="page" href="contacts.php">Contacts</a></li>
+                <li><a class="nav-link" aria-current="page" href="users.php">Users</a></li>
+            <?php }
+            else{?>
                 <!--admin view-->
                 <h1>admin</h1>
+                <li><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
+                <li><a class="nav-link" aria-current="page" href="admin_user.php">User</a></li>
+                <li><a class="nav-link" aria-current="page" href="#">Contest</a></li>
+                <li><a class="nav-link" aria-current="page" href="#">Catagory</a></li>
+           
             <?php }?>
         </ul>
     
