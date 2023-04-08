@@ -17,46 +17,96 @@
         return $data;
     }
     $currentDateTime = date("Y-m-d H:i");
-//0 - publish 1 - anonymous 2 - hidden 3 - draft
-function publishWriting($conn, $title,$body,$authorID,$status=0,$subcategoryID=19){
-    $sql = "insert into writing (title, body, authorID,status,subcategoryID) value ('$title' , '$body', '$authorID','$status','$subcategoryID')";
-    mysqli_query($conn,$sql);
-    $writing_id = mysqli_insert_id($conn);
-    return $writing_id;
-}
-function saveAsDraft($conn, $title,$body,$authorID,$subcategoryID){
-    publishWriting($conn, $title,$body,$authorID,3,$subcategoryID);
-}
-function showAllWriting($conn, $status=0){
-    $cards = "<div class='list-group'>";
-    $sql = "SELECT usernames.username as author, usernames.photo as photo, writing.id as id,
-    title,left(body,430) as blurb,
-    round((length(trim(body))+240)/1440,0) as readtime,
-    subcategory.name as subcategory, views
-    FROM `writing` join `subcategory` on writing.subcategoryID=subcategory.id
-    join usernames on usernames.id=writing.authorID
-    where writing.status = $status";
-    $res = mysqli_query($conn,$sql);
-while($row = mysqli_fetch_assoc($res)){
-    $writeID = $row['id'];
-    $title = $row['title'];
-    $blurb = $row['blurb']."...";
-    $readtime = $row['readtime']==0?'< 1':$row['readtime'];
-    $readtime.=' min read';
-    $subcategory = $row['subcategory'];
-    $topics = returnTags($conn,$writeID);
-    $views = $row['views'];
-    $bookmarks = getBookmarks($conn,$writeID);
-  $author = $row['author'];
-  $imgurl = $row['photo'];//check if null then default
-  
-  //return $author;
-  $profileView =  "<div class='side-profile'><img class='profile-pic' src='$imgurl'>";
-  $profileView .= "<h5>$author</h5></div>";
 
+
+
+    class Writing{
+      public $writeID;
+      public $title;
+      public $blurb;
+      public $readtime;
+      public $subcategory;
+      public $topics;
+      public $views;
+      public $bookmarks;
+      //not needed if its the user.
+      public $author;
+      public $imgurl;
+  
+      function generate($row,$conn){
+        $this->writeID = $row['id'];
+        $this->title = $row['title'];
+        $this->blurb = $row['blurb']."...";
+        $this->readtime = $row['readtime']==0?'< 1':$row['readtime'];
+        $this->readtime.=' min read';
+        $this->subcategory = $row['subcategory'];
+        $this->topics = returnTags($conn,$this->writeID);
+        $this->views = $row['views'];
+        $this->bookmarks = $row['bookmarks'];
+        //getBookmarks($conn,$this->writeID);
+        //not needed if its the user.
+        $this->author = $row['author'];
+        $this->imgurl = $row['photo'];
+      }
+  }
+  
+  
+  function showAllWriting($conn, $status=0){
+      $cards = "<div class='list-group'>";
+  
+      $sql = "select author,photo,t1.id as id,title,blurb,readtime,subcategory,views,nvl(bookmarkcount,0) as bookmarks from 
+      (SELECT usernames.username as author, usernames.photo as photo, writing.id as id,
+            title,left(body,430) as blurb,
+            round((length(trim(body))+240)/1440,0) as readtime,
+            subcategory.name as subcategory, views
+            FROM `writing` join `subcategory` on writing.subcategoryID=subcategory.id
+            join usernames on usernames.id=writing.authorID ";
+      
+      $sql .= "where writing.status = $status";
+
+      $sql .= ") t1
+          left join 
+      (SELECT writingid as id, count(userid) as bookmarkcount FROM `bookmarks` group by writingid) t2  
+      on t1.id = t2.id ";
+      //public writings.
+      
+      //your own writings
+      //$sql .= "where usernames.id = '$user' and writing.status = '$status'"
+      //your bookmarks etcetc...
+      //$sql .= "join bookmarks on bookmarks.writingid = writing.id where bookmarks.userid = '$user';"
+  
+      $res = mysqli_query($conn,$sql);
+  while($row = mysqli_fetch_assoc($res)){
+      $obj = new Writing();
+      $obj->generate($row,$conn);
+      $cards .= renderWritingFromObj($obj);
+  }
+      $cards.='</div>';
+  
+  echo $cards;
+  }
+  
+  function renderWritingFromObj($obj){
+    return renderWritingThumbs(
+      $obj->writeID,
+      $obj->title,
+      $obj->blurb,
+      $obj->readtime,
+      $obj->subcategory,
+      $obj->topics,
+      $obj->views,
+      $obj->bookmarks,
+      $obj->author,
+      $obj->imgurl);
+  }
+  
+  function renderWritingThumbs($writeID,$title,$blurb,$readtime,$subcategory,$topics,$views,$bookmarks,$author=null,$imgurl=null){
+  //return $author;
+  $profileView = ($author==null||$imgurl==null) ? "" : renderProfileView($imgurl,$author);
+  
     $stats = "$views <i class='fa-solid fa-eye'></i> $bookmarks <i class='fa-regular fa-bookmark'></i>";
-$cards .= 
-"<div class='full-article'>$profileView<div class='article-preview'><a href='work.php?id=$writeID' class='article-link list-group-item list-group-item-action flex-column align-items-start'>
+  $card = 
+  "<div class='full-article'>$profileView<div class='article-preview'><a href='work.php?id=$writeID' class='article-link list-group-item list-group-item-action flex-column align-items-start'>
   <div class='d-flex w-100 justify-content-between'>
     <h5 class='mb-1'>$title</h5>
     <small>$readtime</small>
@@ -67,11 +117,28 @@ $cards .=
   <span>$stats</span>
   </div>
   
-</a></div></div>";
-}
-    $cards.='</div>';
+  </a></div></div>";
+  return $card;
+  }
+  
+  function renderProfileView($imgurl,$author){
+    $profileView =  "<div class='side-profile'><img class='profile-pic' src='$imgurl'>";
+  $profileView .= "<h5>$author</h5></div>";
+  return $profileView;
+  }
 
-echo $cards;
+
+
+
+
+
+
+//0 - publish 1 - anonymous 2 - hidden 3 - draft
+function publishWriting($conn, $title,$body,$authorID,$status=0,$subcategoryID=19){
+    $sql = "insert into writing (title, body, authorID,status,subcategoryID) value ('$title' , '$body', '$authorID','$status','$subcategoryID')";
+    mysqli_query($conn,$sql);
+    $writing_id = mysqli_insert_id($conn);
+    return $writing_id;
 }
 
 function displayWriting($conn,$id){

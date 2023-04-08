@@ -1,48 +1,46 @@
 <?php
-echo "test";
+include('constant.php');
+
+//echo "test";
+?>
+<div class="card text-white bg-primary mb-3">
+  <div class="card-header"><h2><?php countUser($conn);?></h2></div>
+  <div class="card-body">
+    <h5 class="card-title">Total USER</h5>
+    <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+  </div>
+</div>
+
+<div class="card text-white bg-primary mb-3">
+  <div class="card-header"><h2><?php countContest($conn);?></h2></div>
+  <div class="card-body">
+    <h5 class="card-title">Total Contest</h5>
+    <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+  </div>
+</div>
+
+<div class="card text-white bg-primary mb-3">
+  <div class="card-header"><h2><?php countArticle($conn);?></h2></div>
+  <div class="card-body">
+    <h5 class="card-title">Total Article</h5>
+    <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+  </div>
+</div>
+
+
+
+
+<?php
 //view topics , remove topics
 //view contest, edit name and description
 //view, delete, privatise writing
 //view, delete users
 //***category create, update, delete, view + subcategory create update delete view
 //***admin approve contest, approve person for further contest
-function createCategory($conn,$name){
-    $sql = "insert into category (name) values ('$name')";
-    //if we are using the defaultsubcategory, then:
-        //keep the default as null
-        //once a new subcategory is made for this category, we check if it has a null default subcategory
-        //if it does, we set the new subcategory as the default.
 
-}
-function updateCategory($conn,$name,$id){//},$defaultID){
-    $sql = "update category set name='$name' where id='$id'";//name='$name', defaultID='$defaultID'
-}
-//function deleteCategory(){}
-function viewCategory($conn){
-    $sql = "select * from category";
-    //show the categories with html.
-}
+viewCategory($conn);
+viewSubCategory();
+viewContests();
 
-function createSubSategory($conn,$name,$description,$catID=1){
-    $sql = "insert into subcategory (name,description,catid) values ('$name','$description','$catID')";
-}
-function updateSubCategory(){}
-function deleteSubCategory(){}
-function viewSubCategory(){}
-
-function approveContest($conn,$contestID){
-    $sql = "update contest set accepted=1 where id='$contestID'";
-}
-function approveAllForUser($conn,$userID){
-    $sql = "update contest set accepted=1 where hostID='$userID'";
-}
-function approveFuture($conn,$userID){
-    $sql = "update usernames set canHost=1 where id='$userID'";
-    /*
-    
-    */
-    approveAllForUser($conn,$userID);
-}
-function viewContests(){}
 
 ?>

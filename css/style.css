@@ -42,7 +42,7 @@
 .blurb{
     background: rgb(0,0,0);
 background: linear-gradient(
-    180deg, 
+  180deg, 
     rgba(0,0,0,1) 0%, 
     rgba(0,0,0,0.7) 50%,
     rgba(0,0,0,0) 90%);
@@ -442,4 +442,14 @@ margin-left:1%;
 
 .square-img{
   aspect-ratio: 1/1;
+}
+
+.text-white{
+  text-align: center;
+  width: 20rem;
+  padding: 2%;
+  float: left;
+  margin-top: 17%;
+  margin-left: 9%;
+ 
 }
