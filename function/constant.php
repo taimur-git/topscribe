@@ -80,7 +80,7 @@
           SELECT writingid as id, count(userid) as bookmarkcount FROM `bookmarks` group by writingid
         ) t2  
         on t1.id = t2.id ";
-      
+      //SELECT id, title, JSON_ARRAYAGG(name) as topics FROM `topicwriting` join topic on topicwriting.tid = topic.tid join writing on writing.id = topicwriting.wid group by id;
       $flag = true;
       switch($case){
         case 1:
