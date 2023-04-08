@@ -11,7 +11,7 @@
             participating in contest and<br>
             publishing your best pieces
             </p>
-            <button type="button" class="btn btn-success landing_btn1">Start writing <span></span><i class="fa-solid fa-circle-arrow-right"></i></button>
+            <a href="editor.php"><button type="button" class="btn btn-success landing_btn1">Start writing <span></span><i class="fa-solid fa-circle-arrow-right"></i></button></a>
         </div>
         <div class="scroll-area">
             <h1 class="lnd_contest">
@@ -22,7 +22,7 @@
             and global position as a writer.<br>
             That’s where various writing<br>
             contests comes into play!</p>
-            <button type="button" class="btn btn-info landing_btn2">Contest <span></span><i class="fa-solid fa-pen-nib"></i></button>
+            <a href="browse.php"><button type="button" class="btn btn-info landing_btn2">Contest <span></span><i class="fa-solid fa-pen-nib"></i></button></a>
         </div>
         <div class="scroll-area">
             <h1 class="landing_heads">
@@ -33,6 +33,10 @@
             They are honored by being featured<br>
             here as the top 3 articles.
             </p>
+            <ul>
+                <li class="fade-item">Item 01</li>
+                <li class="fade-item">Item 02</li>
+                <li class="fade-item">Item 03</li>
+            </ul>
         </div>
-        <div class="scroll-area">4</div>
     </div>   

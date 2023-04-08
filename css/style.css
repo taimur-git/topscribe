@@ -315,6 +315,25 @@ aspect-ratio: 1/1;
   background-size: cover;
 }
 
+.fade-item {
+  transition: .2s all ease-in-out;
+  opacity: 0;
+}
+
+.fade-item .fadein {
+  animation: fadeIn 0.9s 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+      opacity: 0;
+  }
+  100% {
+      opacity: 1;
+  }
+}
+
 .scroll-area:nth-of-type(4) {
   background: #8360A6;
 }
