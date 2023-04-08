@@ -47,47 +47,87 @@
         //not needed if its the user.
         $this->author = $row['author'];
         $this->imgurl = $row['photo'];
+        $this->authorID = $row['authorid'];
       }
   }
   
-  
-  function showAllWriting($conn, $status=0){
+  //needs profile view
+  //show all writings - guest/user whatever
+  //show your bookmarks - user reliant
+
+  //no need for profile view
+  //show your public writings - user reliant
+  //show your private
+  //show your anonymous *
+
+  //show any users writings - profile reliant 
+
+  //
+  function showAllWriting($conn, $case=0,$user=0){
       $cards = "<div class='list-group'>";
   
-      $sql = "select author,photo,t1.id as id,title,blurb,readtime,subcategory,views,nvl(bookmarkcount,0) as bookmarks from 
-      (SELECT usernames.username as author, usernames.photo as photo, writing.id as id,
-            title,left(body,430) as blurb,
-            round((length(trim(body))+240)/1440,0) as readtime,
-            subcategory.name as subcategory, views
-            FROM `writing` join `subcategory` on writing.subcategoryID=subcategory.id
-            join usernames on usernames.id=writing.authorID ";
+      $sql = "select t1.username as author, t1.photo as photo, t1.id as id,
+      t1.title as title,left(t1.body,430) as blurb,
+      round((length(trim(t1.body))+240)/1440,0) as readtime,
+      t1.subcategory as subcategory, t1.views as views, t1.authorid as authorid, nvl(bookmarkcount,0) as bookmarks from 
+        (
+          SELECT writing.id as id, title, body, authorID, datePublished, status, subcategoryID, views, catID, name as subcategory, username, featuredWriting, photo 
+          FROM `writing` join `subcategory` on writing.subcategoryID=subcategory.id
+          join usernames on usernames.id=writing.authorID 
+        ) t1
+        left join 
+        (
+          SELECT writingid as id, count(userid) as bookmarkcount FROM `bookmarks` group by writingid
+        ) t2  
+        on t1.id = t2.id ";
       
-      $sql .= "where writing.status = $status";
+      $flag = true;
+      switch($case){
+        case 1:
+          //default case
+          $sql .= "where t1.status = 0";
+          break;
+        case 2:
+          //your bookmarks
+          $sql .= "join bookmarks on bookmarks.writingid = t1.id where bookmarks.userid = '$user'";
+          break;
+        case 3:
+          //someone's public writings
+          $sql .= "where t1.authorID = '$user' and t1.status = '0'";
+          $flag = false;
+          break;
+        case 4:
+          //someone's private writings
+          $sql .= "where t1.authorID = '$user' and t1.status = '1'";
+          $flag = false;
+          break;
+          //anonymous?
+        default:
+          $sql .= "where t1.status = 0";
 
-      $sql .= ") t1
-          left join 
-      (SELECT writingid as id, count(userid) as bookmarkcount FROM `bookmarks` group by writingid) t2  
-      on t1.id = t2.id ";
+      }
+      //$sql .= " ";
       //public writings.
       
       //your own writings
-      //$sql .= "where usernames.id = '$user' and writing.status = '$status'"
+      //$sql .= "where t1.authorID = '$user' and t1.status = '$status';"
       //your bookmarks etcetc...
-      //$sql .= "join bookmarks on bookmarks.writingid = writing.id where bookmarks.userid = '$user';"
+      //$sql .= "join bookmarks on bookmarks.writingid = t1.id where bookmarks.userid = '$user'"
   
       $res = mysqli_query($conn,$sql);
-  while($row = mysqli_fetch_assoc($res)){
-      $obj = new Writing();
-      $obj->generate($row,$conn);
-      $cards .= renderWritingFromObj($obj);
-  }
+      while($row = mysqli_fetch_assoc($res)){
+          $obj = new Writing();
+          $obj->generate($row,$conn);
+          $cards .= renderWritingFromObj($obj,$flag);
+      }
       $cards.='</div>';
   
-  echo $cards;
+      echo $cards;
   }
   
-  function renderWritingFromObj($obj){
-    return renderWritingThumbs(
+  function renderWritingFromObj($obj,$flag=true){
+    
+    return $flag ? renderWritingThumbs(
       $obj->writeID,
       $obj->title,
       $obj->blurb,
@@ -97,12 +137,24 @@
       $obj->views,
       $obj->bookmarks,
       $obj->author,
-      $obj->imgurl);
+      $obj->imgurl,
+      $obj->authorID
+    ):renderWritingThumbs(
+      $obj->writeID,
+      $obj->title,
+      $obj->blurb,
+      $obj->readtime,
+      $obj->subcategory,
+      $obj->topics,
+      $obj->views,
+      $obj->bookmarks
+    )
+    ;
   }
   
-  function renderWritingThumbs($writeID,$title,$blurb,$readtime,$subcategory,$topics,$views,$bookmarks,$author=null,$imgurl=null){
+  function renderWritingThumbs($writeID,$title,$blurb,$readtime,$subcategory,$topics,$views,$bookmarks,$author=null,$imgurl=null,$authorID=null){
   //return $author;
-  $profileView = ($author==null||$imgurl==null) ? "" : renderProfileView($imgurl,$author);
+  $profileView = ($author==null||$imgurl==null||$authorID==null) ? "" : renderProfileView($imgurl,$author,$authorID);
   
     $stats = "$views <i class='fa-solid fa-eye'></i> $bookmarks <i class='fa-regular fa-bookmark'></i>";
   $card = 
@@ -121,9 +173,9 @@
   return $card;
   }
   
-  function renderProfileView($imgurl,$author){
+  function renderProfileView($imgurl,$author,$authorID){
     $profileView =  "<div class='side-profile'><img class='profile-pic' src='$imgurl'>";
-  $profileView .= "<h5>$author</h5></div>";
+  $profileView .= "<h5><a href='user.php?id=$authorID'>$author</a></h5></div>";
   return $profileView;
   }
 
