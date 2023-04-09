@@ -32,6 +32,8 @@
       //not needed if its the user.
       public $author;
       public $imgurl;
+      public $authorID;
+      public $topicArr;
   
       function generate($row,$conn){
         $this->writeID = $row['id'];
@@ -48,6 +50,7 @@
         $this->author = $row['author'];
         $this->imgurl = $row['photo'];
         $this->authorID = $row['authorid'];
+        $this->topicArr = json_decode($row['topics']);
       }
   }
   
@@ -63,13 +66,14 @@
   //show any users writings - profile reliant 
 
   //
-  function showAllWriting($conn, $case=0,$user=0){
+  function showAllWriting($conn, $case=0,$user=0,$search=''){
+    $dq ='"';
       $cards = "<div class='list-group'>";
   
       $sql = "select t1.username as author, t1.photo as photo, t1.id as id,
       t1.title as title,left(t1.body,430) as blurb,
       round((length(trim(t1.body))+240)/1440,0) as readtime,
-      t1.subcategory as subcategory, t1.views as views, t1.authorid as authorid, nvl(bookmarkcount,0) as bookmarks from 
+      t1.subcategory as subcategory, t1.views as views, t1.authorid as authorid, nvl(bookmarkcount,0) as bookmarks, nvl(topics,'') as topics from 
         (
           SELECT writing.id as id, title, body, authorID, datePublished, status, subcategoryID, views, catID, name as subcategory, username, featuredWriting, photo 
           FROM `writing` join `subcategory` on writing.subcategoryID=subcategory.id
@@ -79,7 +83,13 @@
         (
           SELECT writingid as id, count(userid) as bookmarkcount FROM `bookmarks` group by writingid
         ) t2  
-        on t1.id = t2.id ";
+        on t1.id = t2.id 
+        left join
+        (SELECT wid, concat('[',GROUP_CONCAT(concat('$dq',name,'$dq')),']') as topics 
+        FROM `topicwriting` join topic on topicwriting.tid = topic.tid 
+        join writing on writing.id = topicwriting.wid group by id
+        ) t3
+        on t1.id = t3.wid ";
       //SELECT id, title, JSON_ARRAYAGG(name) as topics FROM `topicwriting` join topic on topicwriting.tid = topic.tid join writing on writing.id = topicwriting.wid group by id;
       $flag = true;
       switch($case){
@@ -106,6 +116,8 @@
           $sql .= "where t1.status = 0";
 
       }
+//order by t1.datePublished desc;//readtime//views//bookmarks//sorting
+      $sql .= "where topics like '%$search%' or title like '%$search%' or t1.username like '%$search%';";
       //$sql .= " ";
       //public writings.
       
