@@ -453,3 +453,18 @@ margin-left:1%;
   margin-left: 9%;
  
 }
+
+.top-article{
+  border: none;
+}
+
+.top-article:hover{
+  color: inherit;
+}
+
+.top-articles{
+    width: 30%;
+    --bs-list-group-bg: none;
+    --bs-list-group-color: #EEE;
+    margin-left: 1.8%;
+}

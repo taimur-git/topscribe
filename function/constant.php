@@ -66,12 +66,23 @@
   //show any users writings - profile reliant 
 
   //
-  function showAllWriting($conn, $case=0,$user=0,$search=''){
+  function showAllWriting($conn, $case=0,$user=0,$search='',$order=0,$asc=1,$top=0){
+    $flag = true;
+    $flag2 = false;
+    $blurbLimit = 430;
+    if($top!=0){
+      $flag2 = true;
+      $order = 3;//or 4, if you want bookmarked writings.
+      $asc = 2;
+      $blurbLimit = 100;
+    }
     $dq ='"';
-      $cards = "<div class='list-group'>";
+      $cards = "<div class='list-group";
+      if($flag2){ $cards.= " top-articles";} 
+      $cards .= "'>";
   
       $sql = "select t1.username as author, t1.photo as photo, t1.id as id,
-      t1.title as title,left(t1.body,430) as blurb,
+      t1.title as title,left(t1.body,$blurbLimit) as blurb,
       round((length(trim(t1.body))+240)/1440,0) as readtime,
       t1.subcategory as subcategory, t1.views as views, t1.authorid as authorid, nvl(bookmarkcount,0) as bookmarks, nvl(topics,'') as topics from 
         (
@@ -90,53 +101,106 @@
         join writing on writing.id = topicwriting.wid group by id
         ) t3
         on t1.id = t3.wid ";
-      //SELECT id, title, JSON_ARRAYAGG(name) as topics FROM `topicwriting` join topic on topicwriting.tid = topic.tid join writing on writing.id = topicwriting.wid group by id;
-      $flag = true;
       switch($case){
         case 1:
           //default case
-          $sql .= "where t1.status = 0";
+          $sql .= "where t1.status = 0 ";
           break;
         case 2:
           //your bookmarks
-          $sql .= "join bookmarks on bookmarks.writingid = t1.id where bookmarks.userid = '$user'";
+          $sql .= "join bookmarks on bookmarks.writingid = t1.id where bookmarks.userid = '$user' ";
           break;
         case 3:
           //someone's public writings
-          $sql .= "where t1.authorID = '$user' and t1.status = '0'";
+          $sql .= "where t1.authorID = '$user' and t1.status = '0' ";
           $flag = false;
           break;
         case 4:
           //someone's private writings
-          $sql .= "where t1.authorID = '$user' and t1.status = '1'";
+          $sql .= "where t1.authorID = '$user' and t1.status = '1' ";
           $flag = false;
           break;
           //anonymous?
         default:
-          $sql .= "where t1.status = 0";
+          $sql .= "where t1.status = 0 ";
 
       }
-//order by t1.datePublished desc;//readtime//views//bookmarks//sorting
-      $sql .= "where topics like '%$search%' or title like '%$search%' or t1.username like '%$search%';";
+      $sql .= " and (topics like '%$search%' or title like '%$search%' or t1.username like '%$search%') ";
       //$sql .= " ";
       //public writings.
-      
-      //your own writings
-      //$sql .= "where t1.authorID = '$user' and t1.status = '$status';"
-      //your bookmarks etcetc...
-      //$sql .= "join bookmarks on bookmarks.writingid = t1.id where bookmarks.userid = '$user'"
-  
+      switch($order){
+        case 1:
+          //datepublished
+          $sql .= " order by t1.datePublished ";
+          break;
+        case 2:
+          //views
+          $sql .= " order by views ";
+          break;
+        case 3:
+          //bookmarks
+          $sql .= " order by bookmarks ";
+          break;
+        case 4:
+          //readtime
+          $sql .= " order by readtime ";
+          break;
+        default:
+          //if anything else, aka 0, then dont sort.
+
+      }
+      if($order!=0){
+        switch($asc){
+          case 1:
+            $sql .= " asc ";
+            break;
+          case 2:
+            $sql .= " desc ";
+            break;
+          default:
+        }
+      }
+      if($flag2){
+        $sql .= " limit $top";
+      }
       $res = mysqli_query($conn,$sql);
       while($row = mysqli_fetch_assoc($res)){
           $obj = new Writing();
           $obj->generate($row,$conn);
-          $cards .= renderWritingFromObj($obj,$flag);
+
+          $cards .= $flag2?renderTopWritings($obj):renderWritingFromObj($obj,$flag);
       }
       $cards.='</div>';
   
       echo $cards;
   }
-  
+  function renderTopWritings($obj){
+    /*
+    $obj->writeID,
+    $obj->title,
+    $obj->blurb,
+    $obj->readtime,
+    $obj->subcategory,
+    $obj->topics,
+    $obj->views,
+    $obj->bookmarks,
+    $obj->author,
+    $obj->imgurl,
+    $obj->authorID
+    */
+  return "<a class='list-group-item d-flex justify-content-between align-items-start top-article' href='work.php?id=$obj->writeID'>
+    <div class='ms-2 me-auto'>
+      <h5>$obj->title</h5>
+      $obj->blurb
+    </div>
+    <div>
+    <small>$obj->subcategory $obj->topics</small>
+    </div>
+  </a>";
+
+
+
+  }
   function renderWritingFromObj($obj,$flag=true){
     
     return $flag ? renderWritingThumbs(

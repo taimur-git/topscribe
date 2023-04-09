@@ -144,4 +144,9 @@ function approveFuture($conn,$userID){
     mysqli_query($conn,$sql);
     approveAllForUser($conn,$userID);
 }
+
+function deleteUnusedTopics($conn){
+    //finds topics that dont exist in topicwriting
+    //deletes them.
+}
 ?>

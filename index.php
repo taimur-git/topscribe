@@ -13,7 +13,7 @@ if(isset($_SESSION['name'])) {
     }else{
         //place here
     //user page
-        showAllWriting($conn,3,2);
+        showAllWriting($conn);
     }
 }else{
     //landing page

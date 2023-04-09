@@ -33,10 +33,13 @@
             They are honored by being featured<br>
             here as the top 3 articles.
             </p>
-            <ul>
+            <!--ul>
                 <li class="fade-item">Item 01</li>
                 <li class="fade-item">Item 02</li>
                 <li class="fade-item">Item 03</li>
-            </ul>
+            </ul-->
+            <?php
+                showAllWriting($conn, 0,0,'',0,1,3);
+            ?>
         </div>
     </div>   
