@@ -468,3 +468,15 @@ margin-left:1%;
     --bs-list-group-color: #EEE;
     margin-left: 1.8%;
 }
+
+.user-profile-view{
+  text-align: center;
+}
+.user-profile-view>img{
+  aspect-ratio: 1/1;
+  width: 100px;
+}
+
+.items-aligned-center{
+  align-items: center;
+}

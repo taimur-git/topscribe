@@ -8,7 +8,7 @@
 
 if(isset($_SESSION['name'])) {
     $user = $_SESSION['id'];
-    showAllUsersForUser($conn,$user);
+    showAllUsers($conn,$user);
     
 }else{
     showAllUsers($conn);

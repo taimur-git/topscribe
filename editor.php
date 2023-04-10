@@ -18,12 +18,8 @@
     </div>
 
 <?php
-
-
 createTopicInput();
 ?>
-
-
 
     <div class="d-grid gap-2">
 <?php
@@ -36,11 +32,6 @@ createTopicInput();
     </div>
 
 </form>
-
-<?php
-//<button onclick='test()'>test</button><script src="scripts/simplemde.min.js"></script>
-?>
-
 
 <?php include('partial/footer.php');?>
 <script type="text/javascript" src="scripts/editor.js"></script>

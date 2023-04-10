@@ -45,7 +45,6 @@
         $this->topics = returnTags($conn,$this->writeID);
         $this->views = $row['views'];
         $this->bookmarks = $row['bookmarks'];
-        //getBookmarks($conn,$this->writeID);
         //not needed if its the user.
         $this->author = $row['author'];
         $this->imgurl = $row['photo'];
@@ -78,7 +77,8 @@
     }
     $dq ='"';
       $cards = "<div class='list-group";
-      if($flag2){ $cards.= " top-articles";} 
+      if($flag2){ $cards.= " top-articles ";}
+      if($user!=0){ $cards .=" items-aligned-center ";}
       $cards .= "'>";
   
       $sql = "select t1.username as author, t1.photo as photo, t1.id as id,
@@ -197,9 +197,6 @@
     <small>$obj->subcategory $obj->topics</small>
     </div>
   </a>";
-
-
-
   }
   function renderWritingFromObj($obj,$flag=true){
     
@@ -254,12 +251,6 @@
   $profileView .= "<h5><a href='user.php?id=$authorID'>$author</a></h5></div>";
   return $profileView;
   }
-
-
-
-
-
-
 
 //0 - publish 1 - anonymous 2 - hidden 3 - draft
 function publishWriting($conn, $title,$body,$authorID,$status=0,$subcategoryID=19){
@@ -561,6 +552,10 @@ function addContact($conn,$user1,$user2){
   $sql = "insert into contacts value ('$user1','$user2')";
   mysqli_query($conn,$sql);
 }
+function removeContact($conn,$user1,$user2){
+  $sql = "delete from contacts where user1id = '$user1' and user2id = '$user2'";
+  mysqli_query($conn,$sql);
+}
 function viewContacts($conn,$user){
   $sql = "select user2id as id, u2.username as friend, u2.photo as photo from 
   contacts join usernames u1 on user1id = u1.id 
@@ -689,12 +684,12 @@ function renderContestEditorBanner($startTime=0,$endTime=0,$banner="images/banne
 echo $str;
 return $str;
 }
-function printUserCard($id,$name,$photo,$loggedin=false,$added=false){
+function printUserCard($id,$name,$photo,$loggedin=false,$added=false,$flag=false){
   $card = "<div class='card profile-card'>
     <img src='$photo' class='card-img-top square-img'>
     <div class='card-body'>
-      <h5 class='card-title'>$name</h5>";
-      if($loggedin){
+      <h5 class='card-title'><a href='user.php?id=$id'>$name</a></h5>";
+      if($loggedin&&!$flag){
         $card.=$added?"<button class=cleanbutton onclick='removeContact($id)'><i class='fa-solid fa-user-minus'></i></button>":"<button class=cleanbutton onclick='addContact($id)'><i class='fa-solid fa-user-plus'></i></button>";
       }
     $card .="</div>
@@ -702,24 +697,48 @@ function printUserCard($id,$name,$photo,$loggedin=false,$added=false){
   return $card;
 }
 
-function showAllUsers($conn){
+function showAllUsers($conn,$user=0){
+  $loggedin = $user!=0;
   $sql = "select * from usernames";
   $res=mysqli_query($conn, $sql);
   while($row = mysqli_fetch_assoc($res)){
     $id = $row['id'];
     $name = $row['username'];
     $photo = $row['photo'];
+    $flag = $user==$id;
+    $added = returnIfAdded($conn,$id,$user);
     //check if current user is connected to session
-$str = printUserCard($id,$name,$photo,true);
+$str = printUserCard($id,$name,$photo,$loggedin,$added,$flag);
     echo $str;
   }
 
 }
-function showAllUsersForUser($conn,$user){
-//check if user has person added.
-//if added, then will show unadd button
-//if not added, then will show add button
-showAllUsers($conn);
+function returnIfAdded($conn,$user,$currentUser){
+    $sql = "select * from contacts where user1id='$currentUser' and user2id='$user'";
+    $res = mysqli_query($conn,$sql);
+    return mysqli_num_rows($res)!=0;
+}
+
+function renderUserPage($conn,$user,$currentUser=0){
+  $sql = "select id,username,photo from usernames where id='$user'";
+  $res = mysqli_query($conn,$sql);
+  $row = mysqli_fetch_assoc($res);
+  $username = $row['username'];
+  $photo = $row['photo'];
+  if($currentUser!=0){
+    $added = returnIfAdded($conn,$user,$currentUser);
+    $contactButton = $added?
+    "<button class=cleanbutton onclick='removeContact($user)'><i class='fa-solid fa-user-minus'></i></button>"
+    :"<button class=cleanbutton onclick='addContact($user)'><i class='fa-solid fa-user-plus'></i></button>";
+  
+  }$profileView = "<br>
+  <div class='user-profile-view'>
+    <img src='$photo'>
+    <h1>$username</h1>
+    <div>$contactButton</div>
+  </div>";
+  echo $profileView;
+  showAllWriting($conn, 3,$user);
 }
 
 ?>
