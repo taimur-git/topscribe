@@ -287,11 +287,11 @@ echo $card;
 }
 
 function showAllContest($conn){
-    $sql = "select contest.bannerurl as photo, contest.id as id, contest.title as title, concat(left(contest.description,100),'...') as blurb, start, end, capacity, subcategory.name as subcategory, category.name as category, count(contestusers.writerID) as registered, usernames.username as host
+    $sql = "select contest.bannerurl as photo, contest.id as id, contest.title as title, concat(left(contest.description,100),'...') as blurb, start, end, capacity, subcategory.name as subcategory, category.name as category, count(contestWriting.writingID) as registered, usernames.username as host
     from contest join subcategory on contest.subcategoryID = subcategory.id
     join category on subcategory.catID = category.id
     join usernames on contest.hostID = usernames.id
-    left join contestusers on contest.id = contestusers.contestID
+    left join contestWriting on contest.id = contestWriting.contestID
     group by contest.id";
 
 $res = mysqli_query($conn,$sql);
@@ -328,6 +328,7 @@ $card = "
     <p>$blurb</p>";
     //"<p>$registered registed out of $capacity filled.</p> "
     //<span class="badge bg-primary rounded-pill">$registered / $capacity</span>
+    $card .= "<a class='btn btn-info' href='editor.php?cid=$contestID'>Enter</a>";
   $card .= "</div>
   <div class='card-footer text-muted'>
     $startDate
@@ -339,6 +340,7 @@ echo $card;
 }
 
 function createContest($conn, $title, $description,$host,$subcategoryID=19,$capacity=null,$start=null,$end=null,$judges=null,$classroom=null,$bannerURL="images/banner.png"){
+  $accepted = 0; //check is host is allowed or not
   $sql = $start==null ? 
   "insert into contest
   (title, description,hostID,subcategoryID)
@@ -456,8 +458,8 @@ function returnDescriptionSubCategory($conn,$subID){
   $description = $row['description'];
   return $description;
 }
-function createTopicInput(){
-$privacy = "<fieldset>
+function createTopicInput($contestFlag=false){
+$privacy = $contestFlag?"":"<fieldset>
 <legend>Privacy settings:</legend>
 
 <div>

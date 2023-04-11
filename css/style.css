@@ -480,3 +480,10 @@ margin-left:1%;
 .items-aligned-center{
   align-items: center;
 }
+
+#contest-category{
+  border: none;
+}
+#contest-category:focus{
+  border: none;
+}
