@@ -101,3 +101,19 @@ setTimeout(() => {
 item.classList.add('fadein')
 }, delay)
 }
+
+
+function slideInTopWritings(){
+    let writing = document.getElementsByClassName('top-article');
+    console.log('hovering')
+    for(let i =0;i<writing.length;i++){
+        writing[i].classList.remove('hidden');
+        writing[i].classList.add('animate__animated');
+        writing[i].classList.add('animate__fadeIn');
+        writing[i].classList.add('animate__slideInDown');
+        
+    }
+    //remove classes: hidden
+    //add classes: animate__animated animate__slideInDown
+    
+}

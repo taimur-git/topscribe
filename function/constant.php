@@ -72,7 +72,7 @@
     $blurbLimit = 430;
     if($top!=0){
       $flag2 = true;
-      $order = 3;//or 4, if you want bookmarked writings.
+      $order = 3;//or 4, if you want most views writings.
       $asc = 2;
       $blurbLimit = 100;
     }
@@ -188,7 +188,8 @@
     $obj->imgurl,
     $obj->authorID
     */
-  return "<a class='list-group-item d-flex justify-content-between align-items-start top-article' href='work.php?id=$obj->writeID'>
+  return "<a class='list-group-item d-flex justify-content-between align-items-start
+   top-article hidden' href='work.php?id=$obj->writeID'>
     <div class='ms-2 me-auto'>
       <h5>$obj->title</h5>
       $obj->blurb

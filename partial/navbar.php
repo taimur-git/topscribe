@@ -4,6 +4,7 @@
     <meta name="author" content="Taimur Rahman" />
     <link rel="stylesheet" href="css/dragula.min.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/animate.min.css">
     <link rel="stylesheet" href="css/style.css">
 <!--simpleMDE-->
     <link rel="stylesheet" href="css/simplemde.min.css">

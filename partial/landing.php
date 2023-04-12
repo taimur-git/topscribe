@@ -1,7 +1,7 @@
 <body style="overflow-y:hidden">
     <div class="scroll-container">
         <div class="scroll-area">
-            <h1 class="landing_heads">
+            <h1 class="landing_heads animate__animated animate__slideInDown">
                 Where writing<br>
                 becomes your Passion
             </h1>
@@ -24,7 +24,7 @@
             contests comes into play!</p>
             <a href="browse.php"><button type="button" class="btn btn-info landing_btn2">Contest <span></span><i class="fa-solid fa-pen-nib"></i></button></a>
         </div>
-        <div class="scroll-area">
+        <div class="scroll-area" onmouseover='slideInTopWritings()'>
             <h1 class="landing_heads">
             When your crafts<br>
             speak for themselves
