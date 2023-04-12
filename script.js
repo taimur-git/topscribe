@@ -85,9 +85,22 @@ function addContact(writer){
     xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200){
         console.log(this.responseText);
+        location.reload();
         }
     };
     xmlhttp.open("GET","function/addContact.php?writer="+writer,true);
+    xmlhttp.send();
+}
+
+function removeContact(writer){
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200){
+        console.log(this.responseText);
+        location.reload();
+        }
+    };
+    xmlhttp.open("GET","function/removeContact.php?writer="+writer,true);
     xmlhttp.send();
 }
 

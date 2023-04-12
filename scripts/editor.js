@@ -1,10 +1,13 @@
 var simplemde = new SimpleMDE({ element: document.getElementById("simplemde") });
 
-const help = document.getElementById("subcategory-help");
+const help1 = document.getElementById("subcategory-help");
+const help2 = document.getElementById("subcategory-help2");
 const tooltip = document.querySelector('#tooltip');
 const autoGenBox = document.getElementById("flexSwitchCheckChecked");
 const topicDiv = document.getElementById("topicDiv");
-changeTooltip();
+if(help1!=null){changeTooltip();}
+if(help2!=null){createPopperHelp2();}
+
 function changeTooltip(){
     let select = document.getElementById("category-select");
     let category = select.options[select.selectedIndex].value;
@@ -14,7 +17,7 @@ function changeTooltip(){
     if (this.readyState == 4 && this.status == 200) {
         let description = this.responseText;
         tooltip.innerHTML = description;
-        const popperInstance = Popper.createPopper(help,tooltip,{
+        const popperInstance = Popper.createPopper(help1,tooltip,{
             placement: 'right-start',
             modifiers: [
                 {
@@ -30,6 +33,20 @@ function changeTooltip(){
     };
     xmlhttp.open("GET","function/subcategoryToolTip.php?subid="+category,true);
     xmlhttp.send();
+}
+function createPopperHelp2(){
+    const popperInstance = Popper.createPopper(help2,tooltip,{
+        placement: 'right-start',
+        modifiers: [
+            {
+              name: 'offset',
+              options: {
+                offset: [0, 8],
+              },
+            },
+          ],
+    });
+    popperInstance.update();
 }
 
 function show() {
@@ -48,12 +65,20 @@ function show() {
   const hideEvents = ['mouseleave', 'blur'];
   
   showEvents.forEach((event) => {
-    help.addEventListener(event, show);
+    if(help1!=null){help1.addEventListener(event, show);}
+    if(help2!=null){help2.addEventListener(event, show);}
+    
+    
   });
   
   hideEvents.forEach((event) => {
-    help.addEventListener(event, hide);
+    if(help1!=null){help1.addEventListener(event, hide);}
+    if(help2!=null){help2.addEventListener(event, hide);}
+    
+    
   });
+
+
 //(autoGenBox.checked)
 function boxClicked(){
     topicDiv.classList.toggle("hidden");

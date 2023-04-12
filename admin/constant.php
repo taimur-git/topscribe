@@ -149,4 +149,12 @@ function deleteUnusedTopics($conn){
     //finds topics that dont exist in topicwriting
     //deletes them.
 }
+function deleteUnusedGroups($conn){
+    //finds groups that dont contain any contacts
+    //deletes them
+}
+function cleanDatabase($conn){
+    deleteUnusedTopics($conn);
+    deleteUnusedGroups($conn);
+}
 ?>
