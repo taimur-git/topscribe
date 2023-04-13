@@ -60,7 +60,7 @@
                 <li><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
                 <li><a class="nav-link" aria-current="page" href="admin_user.php">User</a></li>
                 <li><a class="nav-link" aria-current="page" href="#">Contest</a></li>
-                <li><a class="nav-link" aria-current="page" href="#">Catagory</a></li>
+                <li><a class="nav-link" aria-current="page" href="#">Category</a></li>
            
             <?php }?>
         </ul>
