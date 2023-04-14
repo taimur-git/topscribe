@@ -8,24 +8,22 @@ include('admin/constant.php');
     <tr class="table-dark">
       <th scope="row">ID</th>
       <td>User Name</td>
-      <td>Photo</td>
-      <td>Number of content</td>
+      <td>Total writing</td>
       <td>Action</td>
     </tr>
     <?php
-    $sql = "SELECT `id`, `username`,  `photo` FROM `usernames` WHERE id !=0";
+    $sql = "SELECT usernames.id,usernames.username, COUNT(writing.authorID) FROM `usernames`
+    LEFT JOIN writing ON usernames.id = writing.authorID
+    WHERE usernames.id !=0
+    GROUP by usernames.id";
     $query = mysqli_query($conn, $sql);
     while ($info = mysqli_fetch_array($query)) {
         ?>
             <tr >
                 <td><?php echo $info['id'] ?></td>
                 <td><?php echo $info['username'] ?></td>
-                <td><a id="del" href="delete.php?id=<?= $info['id'] ?>" class ="btn btn-outline-danger">Delete</a></td>
-
-
-                <!-- <td><?php echo $info['photo'] ?></td> -->
-                <!-- <td><img src="<?php echo $info['photo'] ?>" alt="" width="1%"></td> -->
-
+                <td><?php echo $info['COUNT(writing.authorID)'] ?></td>
+                <td><a id="del" onclick="return checkdelete()" href="admin_delete.php?id=<?= $info['id'] ?>" class ="btn btn-outline-danger">Delete</a></td>
             </tr
 <?php
 
@@ -33,6 +31,13 @@ include('admin/constant.php');
     ?>
 
 </table>
+<script>
+        function checkdelete()
+        {
+            return confirm('Are you sure you want to Delete this Record');
+            
+        }
+</script>
 
 
 

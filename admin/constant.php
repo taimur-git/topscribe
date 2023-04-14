@@ -34,7 +34,8 @@ function viewContests(){
 
 
 function countUser($conn){
-    $sql="SELECT COUNT(id) AS total FROM usernames";
+    $sql="SELECT COUNT(id) AS total FROM usernames
+    where id!=0";
     $query = mysqli_query($conn,$sql);
     $value = mysqli_fetch_assoc($query);
     echo($value['total']);
@@ -127,7 +128,7 @@ function deleteSubCategory($conn,$subID){
         updateContestSubCategory($conn,$subID,$defaultID);
         updateWritingSubCategory($conn,$subID,$defaultID);
         $sql = "delete from subcategory where id='$subID'";
-        mysqli_query($conn,$sql);
+        return mysqli_query($conn,$sql);
     }
 }
 

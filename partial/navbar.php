@@ -60,7 +60,17 @@
                 <li><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
                 <li><a class="nav-link" aria-current="page" href="admin_user.php">User</a></li>
                 <li><a class="nav-link" aria-current="page" href="#">Contest</a></li>
-                <li><a class="nav-link" aria-current="page" href="#">Category</a></li>
+                <!-- <li><a class="nav-link" aria-current="page" href="admin_catagory.php">Catagory</a></li> -->
+                <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="catagory.php" role="button" aria-haspopup="true" aria-expanded="false">Category</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="catagory.php">Category</a>
+
+                    <a class="dropdown-item" href="admin_catagory.php">Sub-Category</a>
+                    <!-- <a class="dropdown-item" href="addNewCatagory.php">Add Category</a>
+                    <a class="dropdown-item" href="addNewSubcatagory.php">Add Sub-Category</a> -->
+                </div>
+                </li>
            
             <?php }?>
         </ul>
