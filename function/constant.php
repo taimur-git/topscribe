@@ -186,7 +186,7 @@
   <h3 class='card-header'>$title</h3>
   <div class='card-body'>
     <h5 class='card-title'>$subcategory</h5>
-    <h6 class='card-subtitle text-muted'>Hosted by: <a href='user.php?=$hostid'>$host</a></h6>
+    <h6 class='card-subtitle text-muted'>Hosted by: <a href='user.php?id=$hostid'>$host</a></h6>
   </div>
   <div class='card-body'>
     <p>$description</p>";
@@ -952,7 +952,7 @@ function contestListItem($cid,$title,$startDate,$registered,$capacity,$descripti
   </div>
   <p>$registered ";
   if($capacity!=0 && $capacity!=null){$str .= "/ $capacity";} 
-  $str .= "registered.</p>
+  $str .= " registered.</p>
   <p class='mb-1'>$description</p>
   <small>$endDate $type $statusStr</small>
 </a>";
