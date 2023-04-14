@@ -444,7 +444,7 @@ margin-left:1%;
   aspect-ratio: 1/1;
 }
 
-.text-white{
+.text-white2{
   text-align: center;
   width: 20rem;
   padding: 2%;
@@ -467,4 +467,23 @@ margin-left:1%;
     --bs-list-group-bg: none;
     --bs-list-group-color: #EEE;
     margin-left: 1.8%;
+}
+
+.user-profile-view{
+  text-align: center;
+}
+.user-profile-view>img{
+  aspect-ratio: 1/1;
+  width: 100px;
+}
+
+.items-aligned-center{
+  align-items: center;
+}
+
+#contest-category{
+  border: none;
+}
+#contest-category:focus{
+  border: none;
 }
