@@ -20,6 +20,10 @@ include('constant.php');
     if($bannerURL==""){$bannerURL="images/banner.png";}
 	//createContest($conn, $title, $description,$host,$subcategoryID=19,$capacity=null,$start=null,$end=null,$judges=null,$classroom=null)
     $contest_id = createContest($conn,$title,$description,$host,$subcategory,$capacity,$start,$end,$judge,$student,$bannerURL);
+
+    //if judge != null , 
+
+
     header("Location: ../browse.php");
     //header("Location: ../index.php?id=$writing_id");
 ?>
