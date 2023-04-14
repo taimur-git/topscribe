@@ -34,7 +34,10 @@
       public $imgurl;
       public $authorID;
       public $topicArr;
-  
+
+      public $marks;
+      public $contestID;
+
       function generate($row,$conn){
         $this->writeID = $row['id'];
         $this->title = $row['title'];
@@ -50,6 +53,17 @@
         $this->imgurl = $row['photo'];
         $this->authorID = $row['authorid'];
         $this->topicArr = json_decode($row['topics']);
+      }
+      function generate2($row){
+        $this->contestID = $row['contestID'];
+        $this->writeID = $row['id'];
+        $this->title = $row['title'];
+        $this->authorID = $row['authorID'];
+        $this->marks = $row['avg(score)'];
+        $this->blurb = $row['blurb']."...";
+        $this->readtime = $row['readtime']==0?'< 1':$row['readtime'];
+        $this->readtime.=' min read';
+
       }
   }
 
@@ -96,10 +110,25 @@
       $sql = "left join grouplist on judgeGroup = groupID where ( grouplist.userid = '$id' or hostID = '$id') ";
       return Contest::getBaseSQL().$sql;
     }
+    public static function getSingleRow($id){
+      $sql = "where contest.id='$id'";
+      return Contest::getBaseSQL().$sql;
+    }
 
     function getExtraInfo($conn){
       $id = $this->id;
-      $sql = "SELECT * FROM `contestwriting` join writing on writingID=writing.id where contestID='$id'";
+      /*
+      $sql = "SELECT contestID,id,title,body,authorID,judgeID,datePublished,score,
+      left(body,100) as blurb,
+      round((length(trim(body))+240)/1440,0) as readtime
+       FROM `contestwriting` 
+      join writing on writingID=writing.id left join marks on contestwriting.writingID=marks.writingID where contestID='$id'";
+      */
+      $sql = "SELECT contestID,id,title,body,authorID,datePublished,avg(score),
+      left(body,100) as blurb,
+      round((length(trim(body))+240)/1440,0) as readtime
+       FROM `contestwriting` 
+      join writing on writingID=writing.id left join marks on contestwriting.writingID=marks.writingID where contestID='$id' group by contestwriting.writingID;";
       $this->contestEntries = mysqli_query($conn,$sql);
       
       $sql = "SELECT * FROM `contestusers` join usernames on writerID=usernames.id where contestid='$id'";
@@ -114,6 +143,13 @@
 
       $this->countEntries = mysqli_num_rows($this->contestEntries);
       $this->countRegistered = $this->type==1 ?mysqli_num_rows($this->writers):mysqli_num_rows($this->registered);
+    }
+    function getInfoByID($cid,$conn){
+      $this->id = $cid;
+      $sql = Contest::getSingleRow($this->id);
+      $res = mysqli_query($conn,$sql);
+      $row = mysqli_fetch_assoc($res);
+      $this->getInfo($row,$conn);
     }
     function getInfo($row,$conn){
       
@@ -166,6 +202,19 @@
         $this->state,
         $this->type
       );
+    }
+    function printEntries($conn){
+      //getInfoByID($id,$conn);
+      echo "<div class='list-group'>";
+      //$sql = $this->contestEntries;
+      //$res = mysqli_query($conn,$sql);
+      $res = $this->contestEntries;
+      while($row = mysqli_fetch_assoc($res)){
+        $obj = new Writing();
+        $obj->generate2($row);
+        echo printContestEntry($obj);
+      }
+      echo "</div>";
     }
     function createContestCard($user=-1){
       $bannerurl = $this->bannerURL;
@@ -1030,6 +1079,31 @@ function createRatingSlider($writing_id,$contest_id){
   <input type='submit' value='Mark'>";
   echo $str;
 }
+
+
+function printContestEntry($obj){
+
+  //$obj->contestID;
+  $id = $obj->writeID;
+  $aid = $obj->authorID;
+  $marks = $obj->marks;
+  $title = $obj->title;
+  $blurb = $obj->blurb;
+  //$author = $obj->author;
+  //$obj->readtime;
+  $str = "<a href='work.php?id=$id' class='list-group-item list-group-item-action flex-column align-items-start active'>
+            <div class='d-flex w-100 justify-content-between'>
+              <h5 class='mb-1'>$title</h5>";
+              //<small><button href='user.php?id=$aid'>Author</button></small>
+            $str .= "</div>
+            <p class='mb-1'>$blurb</p>
+            <small>Score: $marks</small>
+          </a>";
+
+  //$str="";
+  return $str;
+}
+
 
 ?>
 
