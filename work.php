@@ -5,15 +5,15 @@ include('partial/navbar.php');
 
 <?php
 $id = $_GET['id'];
-
+$user = isset($_SESSION['id'])?$_SESSION['id']:-1;
 
 incrementView($conn,$id);
 //render the page
 displayWriting($conn,$id);
 echo "<div class='profilebar'>";
 $writer = profileView($conn,$id);
-if(isset($_SESSION['id'])){
-    $user = $_SESSION['id'];
+if($user!=-1){
+    
     $flag = ifBookmark($conn,$user,$id);
     $bookmark = "<button onclick='toggleBookmark($id)' class=cleanbutton><i class='fa-";
     $bookmark.= $flag ? "solid" : "regular";
@@ -36,6 +36,11 @@ data-bs-placement='bottom' data-bs-content='$url' onclick='copyToClipboard()'>
 echo "<button type='button' class=cleanbutton onclick='downloadPDF()'><i class='fa-solid fa-download'></i></button>";
 $topics = returnTags($conn,$id);
 echo "<p>$topics</p>";
+
+/* do something here if the writing is a contest entry, so that only judges can mark it. */
+createRatingSliderForUser($conn,$id,$user);
+
+
 echo "<div id='particles-js'></div>";
 echo "</div>";
 
