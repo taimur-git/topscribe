@@ -69,13 +69,10 @@
     public $subcategoryDescription;
     public $bannerURL;
     public $hostName;
-    /*
-    public $early;
-    public $late;
-    public $ongoing;
-*/
     public $state;//0 - early,1-ongoing, 2-late 
     public $type; //0 - contest, 1-assignemnt, 2- request
+    public $stateStr = ["Not Started Yet","Ongoing","Closed"];
+    public $typeStr = ["Contest","Assignment","Request"];
     
     public $countRegistered;
     public $countEntries;
@@ -84,41 +81,42 @@
     public $judges;
     public $writers;
     public $registered;
+
+    public static function getBaseSQL(){
+      return "SELECT CURRENT_DATE<contest.start as early , CURRENT_DATE>contest.end as late, (CURRENT_DATE>contest.start and CURRENT_DATE<contest.end) as ongoing, 
+    contest.*, usernames.username, usernames.canHost, subcategory.name,subcategory.description as subcategoryhelp
+    FROM `contest` join usernames on contest.hostID=usernames.id join subcategory on contest.subcategoryID=subcategory.id ";
+    }
+    //have functions for the search and filter options too
+    public static function getHostedContests($id){
+      $sql = "where hostID='$id'";
+      return Contest::getBaseSQL().$sql;
+    }
+    public static function getJudgedContests($id){
+      $sql = "left join grouplist on judgeGroup = groupID where grouplist.userid = '$id' or hostID = '$id'";
+      return Contest::getBaseSQL().$sql;
+    }
+
     function getExtraInfo($conn){
       $id = $this->id;
-      $sql = "SELECT * FROM `contestwriting` join writing on writingID=writing.id where contestID=$id";
+      $sql = "SELECT * FROM `contestwriting` join writing on writingID=writing.id where contestID='$id'";
       $this->contestEntries = mysqli_query($conn,$sql);
-      $this->countEntries = mysqli_num_rows($this->contestEntries);
-      //if($this->countEntries==false){$this->countEntries=0;}
-      $sql = "SELECT * FROM `contestusers` join usernames on writerID=usernames.id where contestid=$id";
+      
+      $sql = "SELECT * FROM `contestusers` join usernames on writerID=usernames.id where contestid='$id'";
       $this->registered = mysqli_query($conn,$sql);
-      $this->countRegistered = mysqli_num_rows($this->registered);
-      //if($this->countRegistered==null){$this->countRegistered=0;}
-      //would be better to use the sql query count and group by
-      /*
-      $sql = "SELECT userid from `grouplist` join contest on groupID=contest.judgeGroup where contest.id=$id";
-      $this->judges = mysqli_query($conn,$sql);
-      $sql = "SELECT userid from `grouplist` join contest on groupID=contest.writerGroup where contest.id=$id";
-      $this->writers = mysqli_query($conn,$sql);
-
-      SELECT id,username from `grouplist` join usernames on grouplist.userID=usernames.id where groupID=8
-      */
+      
       $judgeGroup=$this->judgeGroup;
       $writerGroup=$this->writerGroup;
-      $sql = "SELECT id,username from `grouplist` join usernames on grouplist.userID=usernames.id where groupID=$judgeGroup";
+      $sql = "SELECT id,username from grouplist join usernames on grouplist.userID=usernames.id where groupID='$judgeGroup'";
       $this->judges = mysqli_query($conn,$sql);
-      $sql = "SELECT id,username from `grouplist` join usernames on grouplist.userID=usernames.id where groupID=$writerGroup";
+      $sql = "SELECT id,username from grouplist join usernames on grouplist.userID=usernames.id where groupID='$writerGroup'";
       $this->writers = mysqli_query($conn,$sql);
+
+      $this->countEntries = mysqli_num_rows($this->contestEntries);
+      $this->countRegistered = $this->type==1 ?mysqli_num_rows($this->writers):mysqli_num_rows($this->registered);
     }
     function getInfo($row,$conn){
-      /*
-      SELECT CURRENT_DATE<contest.start as early , CURRENT_DATE>contest.end as late, (CURRENT_DATE>contest.start and CURRENT_DATE<contest.end) as ongoing, 
-contest.*, usernames.username, usernames.canHost, subcategory.name,subcategory.description as subcategoryhelp
-FROM `contest` join usernames on contest.hostID=usernames.id join subcategory on contest.subcategoryID=subcategory.id;
-       */
-      //if capacity = 1, its a request
-      //if a writergroup exists, its an assignment.
-      //else, its a contest.
+      
       $this->id=$row['id'];
       $this->title=$row['title'];
       $this->description=$row['description'];
@@ -138,12 +136,14 @@ FROM `contest` join usernames on contest.hostID=usernames.id join subcategory on
 
       if($row['early']==1){
         $this->state = 0;
-      }else if($row['late']==1){
+      }else if($row['late']==1 || $this->capacity-$this->countRegistered<=0){
         $this->state = 2;
       }else{
         $this->state = 1;
       }
-
+//if capacity = 1, its a request
+      //if a writergroup exists, its an assignment.
+      //else, its a contest.
       if($this->capacity == 1){
         $this->type = 2;
       }else if($this->writerGroup!=0){
@@ -152,18 +152,18 @@ FROM `contest` join usernames on contest.hostID=usernames.id join subcategory on
         $this->type = 0;
       }
 
-      //$this->getExtraInfo($this->id,$conn);
+      $this->getExtraInfo($conn);
     }
     function createContestListItem(){
       return contestListItem(
         $this->id,
         $this->title,
-        $this->startDate,
-        $this->registeredCount,
+        $this->startTime,
+        $this->countRegistered,
         $this->capacity,
         $this->description,
-        $this->endDate,
-        $this->status,
+        $this->endTime,
+        $this->state,
         $this->type
       );
     }
@@ -179,6 +179,7 @@ FROM `contest` join usernames on contest.hostID=usernames.id join subcategory on
       $capacity = $this->capacity;
       $id = $this->id;
       $startTime = $this->startTime;
+      $hostFlag = $user == $hostid;
       $card = "
     <div class='card mb-3 contestcard'>
     <img class='card-img-top contest-banner' src='$bannerurl' alt='contest banner'>
@@ -189,53 +190,42 @@ FROM `contest` join usernames on contest.hostID=usernames.id join subcategory on
   </div>
   <div class='card-body'>
     <p>$description</p>";
-    $card .= "<p>$entries entries submitted. ";
-    $card .= "<span class='badge bg-primary rounded-pill'>$registered ";
-    $card .= $capacity > 1 ? "out of $capacity ":""; 
-    $card .= "registered</span></p>";
 
-    $pill="";
-  //this part will change.
-  switch($this->type){
-    case 0:
-      $pill = createPill("Contest");
-      break;
-    case 1:
-      $pill=createPill("Assignment");
-      break;
-    case 2:
-      $pill=createPill("Request");
-      break;
-    default:
-      $pill=createPill("Error");
-  }
+    $card .= $this->type!=2 ? "<p><span class='badge bg-primary rounded-pill'>$entries/$registered submitted</span> ":"<p>";
+if($this->type==2){
+  $card .= $registered>0&&$this->state != 2 ? "<span class='badge bg-danger rounded-pill'>Request is unavailable</span>" : "<span class='badge bg-success rounded-pill'>Request is available</span>";
+
+}
+    
+    $card .= $this->type==0 ? "<span class='badge bg-primary rounded-pill'>$registered":"";
+
+    $card .= $this->type==0&&$capacity > 1 ? "/$capacity ":""; 
+
+    $card .= $this->type==0 ? " registered</span></p>":"</p>";
+
+
   $card .= "<a class='btn btn-info' href='contest.php?id=$id'>View</a>";
-  $statusStr="";
+
   switch($this->state){
     case 0:
-      $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Register</a>";
-      $statusStr="Not Started Yet";
+      $card .= $hostFlag?"<a class='btn btn-danger' href='contestEnd.php?cid=$id'>End Contest</a>": "<a class='btn btn-info' href='contestRegister.php?cid=$id'>Register</a>";
       break;
     case 1:
-      $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Register</a>";
+      $card .= $hostFlag?"<a class='btn btn-danger' href='contestEnd.php?cid=$id'>End Contest</a>":"<a class='btn btn-info' href='contestRegister.php?cid=$id'>Register</a>";
       if($user!=0){
-        $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Edit Entry</a>";
+        $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Edit Contest</a>";
       }else{
+        //another if condition here, if user already wrote something or not.
         $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Enter</a>";
       }
-      
-      $statusStr="Ongoing";
       break;
     case 2:
-      $statusStr="Ended";
       break;
     default:
       $statusStr="Error";
   }
-  $statusStr = createPill($statusStr,false);
-
-//$card .= "<div>$pill $statusStr</div>";
-    
+  $pill=createPill($this->typeStr[$this->type]);
+  $statusStr = createPill($this->stateStr[$this->state],false);
   $card .= "</div>
   <div class='card-footer text-muted'>
     <div>$pill $statusStr</div>
@@ -247,6 +237,8 @@ FROM `contest` join usernames on contest.hostID=usernames.id join subcategory on
 ";
 return $card;
     }
+
+
   }
   
   //needs profile view
@@ -363,7 +355,6 @@ return $card;
       while($row = mysqli_fetch_assoc($res)){
           $obj = new Writing();
           $obj->generate($row,$conn);
-
           $cards .= $flag2?renderTopWritings($obj):renderWritingFromObj($obj,$flag);
       }
       $cards.='</div>';
@@ -484,17 +475,27 @@ echo $card;
 }
 
 function showAllContest($conn,$user=0){
-    $sql = "SELECT CURRENT_DATE<contest.start as early , CURRENT_DATE>contest.end as late, (CURRENT_DATE>contest.start and CURRENT_DATE<contest.end) as ongoing, 
-    contest.*, usernames.username, usernames.canHost, subcategory.name,subcategory.description as subcategoryhelp
-    FROM `contest` join usernames on contest.hostID=usernames.id join subcategory on contest.subcategoryID=subcategory.id";
+    $sql = Contest::getBaseSQL();
+    $res = mysqli_query($conn,$sql);
+    while($row = mysqli_fetch_assoc($res)){
+      $obj = new Contest();
+      $obj->getInfo($row,$conn);
+      $card = $obj->createContestCard($user);
+      echo $card;
+    }
+}
 
-$res = mysqli_query($conn,$sql);
-while($row = mysqli_fetch_assoc($res)){
+function renderContestListView($conn,$user=0,$host=true){
+  $sql = $host?Contest::getHostedContests($user):Contest::getJudgedContests($user);
+  $res = mysqli_query($conn,$sql);
+  $cards ="";
+  while($row = mysqli_fetch_assoc($res)){
     $obj = new Contest();
     $obj->getInfo($row,$conn);
-    $card = $obj->createContestCard($user);
-    echo $card;
-}
+    $card = $obj->createContestListItem($user);
+    $cards .= $card;
+  }
+  return $cards;
 }
 
 function createContest($conn, $title, $description,$host,$subcategoryID=19,$capacity=null,$start=null,$end=null,$judges=null,$classroom=null,$bannerURL="images/banner.png"){
@@ -510,6 +511,16 @@ function createContest($conn, $title, $description,$host,$subcategoryID=19,$capa
 
     mysqli_query($conn,$sql);
     $contest_id = mysqli_insert_id($conn);
+
+    //from the $classroom variable, already register students.
+    if($classroom!=null||$classroom!=0){
+      $sql = "INSERT into contestusers(contestID,writerID)
+        select '$contestID',userid from grouplist 
+        where groupID = '$classroom'";
+        //TO-DO
+        //ALSO MAJOR ISSUE: IF GROUPS CHANGE, THIS SHOULD ALSO CHANGE DYNAMICALLY.
+    }
+
     return $contest_id;
 }
 
@@ -901,19 +912,6 @@ function renderUserPage($conn,$user,$currentUser=0){
   showAllWriting($conn, 3,$user);
 }
 
-function contests(){
-/*
-SELECT * FROM `contestwriting` join contest on contestID=contest.id
-join writing on contestwriting.writingID = writing.id
-join usernames on writing.authorID=usernames.id
-
-
-SELECT CURRENT_DATE<contest.start as early , CURRENT_DATE>contest.end as late, (CURRENT_DATE>contest.start and CURRENT_DATE<contest.end) as ongoing, 
-contest.*, usernames.username, usernames.canHost, subcategory.name,subcategory.description 
-FROM `contest` join usernames on contest.hostID=usernames.id join subcategory on contest.subcategoryID=subcategory.id; 
- */
-}
-
 function contestListItem($cid,$title,$startDate,$registered,$capacity,$description,$endDate,$status,$type){
   //type = 0 contest 1 assignment 2 request?
   $type="";
@@ -943,7 +941,7 @@ function contestListItem($cid,$title,$startDate,$registered,$capacity,$descripti
       $statusStr="Ended";
       break;
     default:
-      $statusStr="Error";
+      $statusStr="Error $status";
   }
   $type = createPill($type);
   $statusStr = createPill($statusStr,false);

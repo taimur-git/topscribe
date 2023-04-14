@@ -16,8 +16,8 @@ echo "<div class='accordion' id='accordionParent'>";
 echo createAccordionItem(1,"Own writings",showAllWriting($conn, 3,$user,'' , 0, 1, 0,false));
 echo createAccordionItem(2,"Bookmarks",showAllWriting($conn, 2,$user,'' , 0, 1, 0,false));
 echo createAccordionItem(3,"Registered Contests","");
-echo createAccordionItem(4,"Hosted Contests","");
-echo createAccordionItem(5,"Judging Contests","");
+echo createAccordionItem(4,"Hosted Contests",renderContestListView($conn,$user,));
+echo createAccordionItem(5,"Judging Contests",renderContestListView($conn,$user,false));
 echo "</div>";
 
 

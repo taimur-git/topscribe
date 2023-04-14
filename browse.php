@@ -3,7 +3,9 @@
 
 <!--landing page-->
 <?php
-showAllContest($conn);
+//$id = $_GET['id'];
+$user = isset($_SESSION['id'])?$_SESSION['id']:0;
+showAllContest($conn,$user);
 ?>
 
 <?php include('partial/footer.php');?>
