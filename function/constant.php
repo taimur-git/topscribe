@@ -76,16 +76,16 @@
     
     public $countRegistered;
     public $countEntries;
-//sql tables 
+    //sql tables 
     public $contestEntries;
     public $judges;
     public $writers;
     public $registered;
 
     public static function getBaseSQL(){
-      return "SELECT CURRENT_DATE<contest.start as early , CURRENT_DATE>contest.end as late, (CURRENT_DATE>contest.start and CURRENT_DATE<contest.end) as ongoing, 
-    contest.*, usernames.username, usernames.canHost, subcategory.name,subcategory.description as subcategoryhelp
-    FROM `contest` join usernames on contest.hostID=usernames.id join subcategory on contest.subcategoryID=subcategory.id ";
+        return "SELECT CURRENT_DATE<contest.start as early , CURRENT_DATE>contest.end as late, (CURRENT_DATE>contest.start and CURRENT_DATE<contest.end) as ongoing, 
+      contest.*, usernames.username, usernames.canHost, subcategory.name,subcategory.description as subcategoryhelp
+      FROM `contest` join usernames on contest.hostID=usernames.id join subcategory on contest.subcategoryID=subcategory.id ";
     }
     //have functions for the search and filter options too
     public static function getHostedContests($id){
@@ -93,7 +93,7 @@
       return Contest::getBaseSQL().$sql;
     }
     public static function getJudgedContests($id){
-      $sql = "left join grouplist on judgeGroup = groupID where grouplist.userid = '$id' or hostID = '$id'";
+      $sql = "left join grouplist on judgeGroup = groupID where ( grouplist.userid = '$id' or hostID = '$id') ";
       return Contest::getBaseSQL().$sql;
     }
 
@@ -141,7 +141,7 @@
       }else{
         $this->state = 1;
       }
-//if capacity = 1, its a request
+      //if capacity = 1, its a request
       //if a writergroup exists, its an assignment.
       //else, its a contest.
       if($this->capacity == 1){
@@ -167,7 +167,7 @@
         $this->type
       );
     }
-    function createContestCard($user=0){
+    function createContestCard($user=-1){
       $bannerurl = $this->bannerURL;
       $title = $this->title;
       $subcategory = $this->subcategoryName;
@@ -180,50 +180,58 @@
       $id = $this->id;
       $startTime = $this->startTime;
       $hostFlag = $user == $hostid;
+
+      $userWrittenFlag = false;//change this
+
       $card = "
-    <div class='card mb-3 contestcard'>
-    <img class='card-img-top contest-banner' src='$bannerurl' alt='contest banner'>
-  <h3 class='card-header'>$title</h3>
-  <div class='card-body'>
-    <h5 class='card-title'>$subcategory</h5>
-    <h6 class='card-subtitle text-muted'>Hosted by: <a href='user.php?id=$hostid'>$host</a></h6>
-  </div>
-  <div class='card-body'>
-    <p>$description</p>";
+        <div class='card mb-3 contestcard'>
+        <img class='card-img-top contest-banner' src='$bannerurl' alt='contest banner'>
+      <h3 class='card-header'>$title</h3>
+      <div class='card-body'>
+        <h5 class='card-title'>$subcategory</h5>
+        <h6 class='card-subtitle text-muted'>Hosted by: <a href='user.php?id=$hostid'>$host</a></h6>
+      </div>
+      <div class='card-body'>
+        <p>$description</p>";
 
-    $card .= $this->type!=2 ? "<p><span class='badge bg-primary rounded-pill'>$entries/$registered submitted</span> ":"<p>";
-if($this->type==2){
-  $card .= $registered>0&&$this->state != 2 ? "<span class='badge bg-danger rounded-pill'>Request is unavailable</span>" : "<span class='badge bg-success rounded-pill'>Request is available</span>";
+      $card .= $this->type!=2 ? "<p><span class='badge bg-primary rounded-pill'>$entries/$registered submitted</span> ":"<p>";
+      if($this->type==2){
+        $card .= $registered>0&&$this->state != 2 ? "<span class='badge bg-danger rounded-pill'>Request is unavailable</span>" : "<span class='badge bg-success rounded-pill'>Request is available</span>";
 
-}
-    
-    $card .= $this->type==0 ? "<span class='badge bg-primary rounded-pill'>$registered":"";
-
-    $card .= $this->type==0&&$capacity > 1 ? "/$capacity ":""; 
-
-    $card .= $this->type==0 ? " registered</span></p>":"</p>";
-
-
-  $card .= "<a class='btn btn-info' href='contest.php?id=$id'>View</a>";
-
-  switch($this->state){
-    case 0:
-      $card .= $hostFlag?"<a class='btn btn-danger' href='contestEnd.php?cid=$id'>End Contest</a>": "<a class='btn btn-info' href='contestRegister.php?cid=$id'>Register</a>";
-      break;
-    case 1:
-      $card .= $hostFlag?"<a class='btn btn-danger' href='contestEnd.php?cid=$id'>End Contest</a>":"<a class='btn btn-info' href='contestRegister.php?cid=$id'>Register</a>";
-      if($user!=0){
-        $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Edit Contest</a>";
-      }else{
-        //another if condition here, if user already wrote something or not.
-        $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Enter</a>";
       }
-      break;
-    case 2:
-      break;
-    default:
-      $statusStr="Error";
-  }
+    
+      $card .= $this->type==0 ? "<span class='badge bg-primary rounded-pill'>$registered":"";
+
+      $card .= $this->type==0&&$capacity > 1 ? "/$capacity ":""; 
+
+      $card .= $this->type==0 ? " registered</span></p>":"</p>";
+
+
+      $card .= "<a class='btn btn-info' href='contest.php?id=$id'>View</a>";
+      if($user!=-1){
+        switch($this->state){
+          case 0:
+            $card .= $hostFlag?"<a class='btn btn-danger' href='contestEnd.php?cid=$id'>End Contest</a>": "<a class='btn btn-info' href='contestRegister.php?cid=$id'>Register</a>";
+            break;
+          case 1:
+            $card .= $hostFlag?"<a class='btn btn-danger' href='contestEnd.php?cid=$id'>End Contest</a>":"<a class='btn btn-info' href='contestRegister.php?cid=$id'>Register</a>";
+            
+              if($hostFlag){
+                $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Edit Contest</a>";
+              }else{
+                if($userWrittenFlag){
+                  $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Edit Entry</a>";
+                }else{
+                  $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Enter</a>";
+                }
+              }
+            break;
+          case 2:
+            break;
+          default:
+            $statusStr="Error";
+        }
+      }
   $pill=createPill($this->typeStr[$this->type]);
   $statusStr = createPill($this->stateStr[$this->state],false);
   $card .= "</div>
@@ -309,6 +317,12 @@ return $card;
           $flag = false;
           break;
           //anonymous?
+        case 5:
+            //someone's contest entries
+            $sql .= "where t1.authorID = '$user' and t1.status = '3' ";
+            $flag = false;
+            break;
+            //anonymous?
         default:
           $sql .= "where t1.status = 0 ";
 
@@ -879,7 +893,7 @@ function showAllUsers($conn,$user=0){
     $flag = $user==$id;
     $added = returnIfAdded($conn,$id,$user);
     //check if current user is connected to session
-$str = printUserCard($id,$name,$photo,$loggedin,$added,$flag);
+    $str = $id==0?:printUserCard($id,$name,$photo,$loggedin,$added,$flag);
     echo $str;
   }
 
@@ -968,6 +982,53 @@ $str = "<span class='badge rounded-pill bg-dark'>$content</span>";
   }
   return $str;
 
+}
+
+function registerForContest($conn,$cid,$authorID){
+  //register
+  $sql = "INSERT INTO `contestusers` (`contestID`, `writerID`) VALUES ('$cid', '$authorID')";
+  mysqli_query($conn,$sql);
+}
+function submitContestEntry($conn,$cid,$writing_id,$authorID){
+  //entry
+  $sql = "INSERT INTO `contestwriting` (`contestID`, `writingID`) VALUES ('$cid', '$writing_id')";
+  mysqli_query($conn,$sql);
+  registerForContest($conn,$cid,$authorID);
+}
+
+function getSubCategoryFromContest($conn,$cid){
+  $sql = "SELECT subcategoryID,name,subcategory.description as helpstr  FROM `contest` join subcategory on subcategoryID=subcategory.id where contest.id=$cid";
+  $res = mysqli_query($conn,$sql);
+  $row = mysqli_fetch_assoc($res);
+  return $row;
+}
+
+function createRatingSliderForUser($conn,$writing_id,$user){
+  //function to check if writing is allowed to be judged by the current user.
+  //we check if writing status = 3.
+  //then we check the contest id the writing is written for.
+  //we find host + judge panel for the contest
+  //if user exists there, then return the slider.
+
+  $sql = "SELECT * FROM `contestwriting` where writingID=$writing_id";
+  $res = mysqli_query($conn,$sql);
+  if(mysqli_num_rows($res)==0){return;}
+  $row = mysqli_fetch_assoc($res);
+  $cid = $row['contestID'];
+  $sql = Contest::getJudgedContests($user)." and contest.id='$cid' ";
+  $res = mysqli_query($conn,$sql);
+  if(mysqli_num_rows($res)!=0){
+    createRatingSlider($writing_id,$cid);
+  } //something happens if there entries.
+}
+
+function createRatingSlider($writing_id,$contest_id){
+  $str = "<form action='function/markWriting.php' method='post'>
+  <input type='hidden' name='wid' value='$writing_id'>
+  <input type='hidden' name='cid' value='$contest_id'>
+  <input type='range' class='form-range' min='0' max='10' step='1' name='marks'>
+  <input type='submit' value='Mark'>";
+  echo $str;
 }
 
 ?>
