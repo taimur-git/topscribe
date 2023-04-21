@@ -69,7 +69,7 @@ include('admin/constant.php');
 
 </table>
 
-<a href="addNewCatagory.php" id="item">Add Category</a>
+<!-- <a href="addNewCatagory.php" id="item">Add Category</a> -->
 
 <?php 
     if(isset($_POST['button'])){
