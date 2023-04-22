@@ -84,6 +84,9 @@ include('admin/constant.php');
 
 </table>
 
+<a href="addNewSubcatagory.php" id="addSubCat" class="btn btn-success">Add Sub-Category</a>
+
+
 
 
 

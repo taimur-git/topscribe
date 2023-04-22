@@ -45,10 +45,7 @@ include('admin/constant.php');
                       }
                 ?>
                 </select>
-                        <?php
-                        
-                        
-                    ?>
+
                     <input type="hidden" name="cat_id" value="<?php echo $info['id'] ?>">
                 </td>
 
@@ -69,7 +66,7 @@ include('admin/constant.php');
 
 </table>
 
-<!-- <a href="addNewCatagory.php" id="item">Add Category</a> -->
+<a href="addNewCatagory.php" id="addCat" class="btn btn-success">Add Category</a>
 
 <?php 
     if(isset($_POST['button'])){

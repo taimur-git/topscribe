@@ -487,3 +487,14 @@ margin-left:1%;
 #contest-category:focus{
   border: none;
 }
+
+
+#addCat{
+  float: right;
+  margin-right: 10%;
+}
+
+#addSubCat{
+  float: right;
+  margin-right: 5%;
+}
