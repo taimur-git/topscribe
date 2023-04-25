@@ -22,7 +22,8 @@ if($user!=-1){
     if($writer == $user){
         ///something
         //<button href = 'editWriting?id=$id'>
-        echo "<button class=cleanbutton><i class='fa-solid fa-pen-to-square'></i></button><button onclick='deleteWriting($id)' class=cleanbutton><i class='fa-solid fa-trash'></i></button>";
+        echo "<button class=cleanbutton><i class='fa-solid fa-pen-to-square'></i></button>";
+        echo "<button onclick='deleteWriting($id)' class=cleanbutton><i class='fa-solid fa-trash'></i></button>";
     }else{
         echo "<button class=cleanbutton onclick='addContact($writer)'><i class='fa-solid fa-user-plus'></i></button>";
     }

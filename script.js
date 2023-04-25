@@ -47,13 +47,19 @@ function toggleBookmark(writing){
 }
 
 function deleteWriting(id){
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200){
-        }
-    };
-    xmlhttp.open("GET","function/deleteWriting.php?writeid="+id,true);
-    xmlhttp.send();
+    let confirm = window.confirm("Do you wish to delete this writing?");
+    if(confirm){
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200){
+            //location.reload();
+            window.location.href = "index.php";
+            }
+        };
+        xmlhttp.open("GET","function/deleteWriting.php?writeid="+id,true);
+        xmlhttp.send();
+    }
+    
 }
 
 function imgChange(){
@@ -113,4 +119,51 @@ function fadeIn (item, delay) {
 setTimeout(() => {
 item.classList.add('fadein')
 }, delay)
+}
+
+
+/*
+function renderView(val){
+    let val2 = document.getElementById("searchTerm").value;
+    //console.log(val);
+    let change = document.getElementById("touchThis");
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200){
+        change.innerHTML = this.responseText;
+        //location.reload();
+        }
+    };
+    xmlhttp.open("GET","function/searchWriting.php?search="+val2,true);
+    xmlhttp.send();
+}
+*/
+
+    
+    
+function renderView(){
+    const orderElement = document.getElementById("orderSelect");
+    const sortElement = document.getElementById("sortSelect");
+    const searchElement = document.getElementById("searchTerm");
+    let val = searchElement.value;
+    let order = orderElement.value;
+    let sort = sortElement.value;
+    if(order=="0"){
+        sortElement.classList.add("hidden");
+    }else{
+        sortElement.classList.remove("hidden");
+    }
+    
+    let change = document.getElementById("touchThis");
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200){
+        change.innerHTML = this.responseText;
+        //location.reload();
+        }
+    };
+    xmlhttp.open("GET","function/searchWriting.php?search="+val+"&order="+order+"&sort="+sort,true);
+    xmlhttp.send();
+
+    //renderView(val);
 }
