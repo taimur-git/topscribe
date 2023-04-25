@@ -6,6 +6,12 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AccountManager' => $vendorDir . '/textrazor/textrazor-php/TextRazor.php',
+    'ClassifierManager' => $vendorDir . '/textrazor/textrazor-php/TextRazor.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
-    'Normalizer' => $vendorDir . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
+    'DictionaryManager' => $vendorDir . '/textrazor/textrazor-php/TextRazor.php',
+    'TextRazor' => $vendorDir . '/textrazor/textrazor-php/TextRazor.php',
+    'TextRazorConnection' => $vendorDir . '/textrazor/textrazor-php/TextRazor.php',
+    'TextRazorQueryBuilder' => $vendorDir . '/textrazor/textrazor-php/TextRazor.php',
+    'TextRazorSettings' => $vendorDir . '/textrazor/textrazor-php/TextRazor.php',
 );

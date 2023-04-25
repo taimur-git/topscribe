@@ -732,7 +732,7 @@ $inputbar = "
 ";
 
       $html = "<div class='form-check form-switch'>
-        <input class='form-check-input' type='checkbox' id='flexSwitchCheckChecked' onclick='boxClicked()'>
+        <input class='form-check-input' type='checkbox' id='flexSwitchCheckChecked' name='autogen' onclick='boxClicked()'>
         <label class='form-check-label' for='flexSwitchCheckChecked'>Automatically generate topics</label>
       </div> ";
       $html .= "<div id='topicDiv'>";
