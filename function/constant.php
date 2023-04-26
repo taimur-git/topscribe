@@ -520,6 +520,8 @@ return $card;
 
 //0 - publish 1 - anonymous 2 - hidden 3 - draft
 function publishWriting($conn, $title,$body,$authorID,$status=0,$subcategoryID=19){
+  //strip the body of any ` and replace it with ' ?
+  $body = addslashes($body);
     $sql = "insert into writing (title, body, authorID,status,subcategoryID) value ('$title' , '$body', '$authorID','$status','$subcategoryID')";
     mysqli_query($conn,$sql);
     $writing_id = mysqli_insert_id($conn);
@@ -536,6 +538,7 @@ function displayWriting($conn,$id){
 
     $title = $row['title'];
     $body = $row['body'];
+    $body = stripslashes($body);
     $author = $row['author'];
     $date = $row['datePublished'];
     $subcategory = $row['subcategory'];
