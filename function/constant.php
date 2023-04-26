@@ -128,7 +128,7 @@
       left(body,100) as blurb,
       round((length(trim(body))+240)/1440,0) as readtime
        FROM `contestwriting` 
-      join writing on writingID=writing.id left join marks on contestwriting.writingID=marks.writingID where contestID='$id' group by contestwriting.writingID;";
+      join writing on writingID=writing.id left join marks on contestwriting.writingID=marks.writingID where contestID='$id' group by contestwriting.writingID";
       $this->contestEntries = mysqli_query($conn,$sql);
       
       $sql = "SELECT * FROM `contestusers` join usernames on writerID=usernames.id where contestid='$id'";
@@ -1158,7 +1158,67 @@ function printContestEntry($obj){
   return $str;
 }
 
+function createNavElement($href, $name,$icon){
+  //<li><a class="nav-link" aria-current="page" href="index.php">Home</a></li>
+  //home
+  //editor
+  //contests
+  //contacts (will be in user page)
+  //all users 
+  //<i class="fa-solid fa-pen-nib"></i>
+  //$icon = house , pen-to-square , book,  pen-nib
+  $icons = ['house','pen-to-square','book','pen-nib'];
+  $str = "<li class='navItem'><a class='nav-link' aria-current='page' href='$href'>
+  <div class='navIcon'><i class='fa-solid fa-$icons[$icon]'></i></div>
+  <div class='navIconTitle'>$name</div>
+  </a></li>";
+  return $str;
+}
 
+function createUserDropdown($conn,$id){
+  //<img class='profile-pic' src='$imgurl'>
+  $sql = "select id,username,photo from usernames where id='$id'";
+  $res = mysqli_query($conn,$sql);
+  $row = mysqli_fetch_assoc($res);
+  $username = $row['username'];
+  $photo = $row['photo'];
+  $image = "<img class='profile-pic2' src='$photo'>";
+  $str = "<li class='nav-item dropdown'>
+          <a class='nav-link dropdown-toggle profileButton' data-bs-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='false'>$image $username</a>
+          <div class='dropdown-menu'>
+            <a class='dropdown-item' href='user.php'>Dashboard</a>
+            <a class='dropdown-item' href='contacts.php'>Contacts</a>
+            <div class='dropdown-divider'></div>
+            <a class='dropdown-item' href='user.php'>My Writings</a>
+            <a class='dropdown-item' href='contacts.php'>Bookmarks</a>
+            <a class='dropdown-item' href='user.php'>Hosted Contests</a>
+            <a class='dropdown-item' href='contacts.php'>Joined Contests</a>
+            <div class='dropdown-divider'></div>
+            <a class='dropdown-item' href='function/logout.php'>Log Out</a>
+          </div>
+        </li>";
+        return $str;
+}
+
+function returnScoreList($conn,$id){
+  $arr = array_fill(0,11,0);
+  $sql = "select ceil(t1.marks) as score,count(t1.id) as contestants from (SELECT id,avg(score) as marks
+       FROM `contestwriting` 
+      join writing on writingID=writing.id 
+      left join marks on contestwriting.writingID=marks.writingID 
+      where contestID='$id' group by contestwriting.writingID)t1 group by ceil(t1.marks)";
+      $res = mysqli_query($conn,$sql);
+
+      while($row = mysqli_fetch_assoc($res)){
+        $x = $row['score'];
+        $y = $row['contestants'];
+        $arr[$x]=$y;
+      }
+      
+      return str_replace('"', '', json_encode($arr));
+
+
+}
 ?>
 
 

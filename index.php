@@ -11,19 +11,20 @@ if(isset($_SESSION['name'])) {
         //admin
         include('admin/home.php');
     }else{
-        //place here
-    //user page
-        include('partial/searchBar.php');
-        echo "<div id='touchThis'>";
-        showAllWriting($conn);
-        echo "</div>";
+        include('partial/writings.php');
+        $flag = true;
+        
     }
 }else{
     //landing page
     include('partial/landing.php');
 }
 
-include('partial/footer.php');?>
+include('partial/footer.php');
+if(isset($flag)){
+    echo "<script type='text/javascript' src='scripts/writings.js'></script>";
+}
+?>
     
 
 

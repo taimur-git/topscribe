@@ -1,7 +1,7 @@
 <?php include('partial/navbar.php');?>
 <?php
 $user = $_SESSION['id'];
-$page = $_GET['id'];
+$page = isset($_GET['id'])?$_GET['id']:$user;
 
 if($user == $page){
     //if user goes to their own page:

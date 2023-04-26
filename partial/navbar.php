@@ -20,14 +20,14 @@
 <nav class="navbar navbar-expand-lg bg-primary navbar-dark nav-height">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
-    <img src="images/logo.svg" alt="Logo" class="d-inline-block align-text-top filter-white">
+    <!--img src="images/logo.svg" alt="Logo" class="d-inline-block align-text-top filter-white"-->
 
     <?php
     include('function/constant.php');
     if(isset($_SESSION['name'])) {
         $name = $_SESSION['name'];
         $id = $_SESSION['id'];
-        echo "Welcome $name.";
+        //echo "Welcome $name.";
     }
 ?>
 
@@ -38,22 +38,30 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 justify-content-center">
 
         <?php if(!isset($_SESSION['name'])){?>
         <!--guest view-->
-                <li><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
+                <li><a class="nav-link" aria-current="page" href="index.php">Home</a></li>
                 <li><a class="nav-link" aria-current="page" href="editor.php">Editor</a></li>
                 <li><a class="nav-link" aria-current="page" href="browse.php">Browse</a></li>
             <?php }
-            else if($_SESSION['id'] != 0){ ?>
+            else if($_SESSION['id'] != 0){ 
+                echo createUserDropdown($conn,$id);
+                echo createNavElement("index.php","home",0);
+                echo createNavElement("editor.php","write",1);
+                //echo createNavElement(".php","browse",2);
+                echo createNavElement("browse.php","contests",3);
+                ?>
                 <!--user view-->
+                <!--
                 <li><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
                 <li><a class="nav-link" aria-current="page" href="editor.php">Editor</a></li>
                 <li><a class="nav-link" aria-current="page" href="browse.php">Browse</a></li>
                 <li><a class="nav-link" aria-current="page" href="discover.php">Create</a></li>
                 <li><a class="nav-link" aria-current="page" href="contacts.php">Contacts</a></li>
                 <li><a class="nav-link" aria-current="page" href="users.php">Users</a></li>
+            -->
             <?php }
             else{?>
                 <!--admin view-->
@@ -72,6 +80,7 @@
                     <a class="dropdown-item" href="addNewSubcatagory.php">Add Sub-Category</a> -->
                 </div>
                 </li>
+                <li><a href='function/logout.php' class='btn btn-primary'>Logout</a></li>
            
             <?php }?>
         </ul>
@@ -79,9 +88,7 @@
 <?php
 
 
-    if(isset($_SESSION['name'])) {
-        echo "<a href='function/logout.php' class='btn btn-primary'>Logout</a>";
-    }else{
+    if(!isset($_SESSION['name'])) {
     ?>
 
 

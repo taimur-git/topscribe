@@ -22,7 +22,7 @@ if($auto){
     $response = $textrazor->analyze($text);
     if (isset($response['response']['topics'])) {
         foreach ($response['response']['topics'] as $topic) {
-            if($topic['score'] > 0.95 || $i < 3){
+            if($topic['score'] > 0.99 || $i < 3){
                 array_push($topicArr,strtolower($topic['label']));
                 $i = $i + 1;
             }

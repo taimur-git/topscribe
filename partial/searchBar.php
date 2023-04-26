@@ -1,9 +1,7 @@
 <div class='filter-input'>
 <div class="input-group rounded">
   <input type="search" class="form-control rounded" placeholder="Search: title, topics, username, subcategory" aria-label="Search" aria-describedby="search-addon" id='searchTerm' oninput="renderView()"/>
-  <span class="input-group-text border-0" id="search-addon">
-    <i class="fas fa-search"></i>
-  </span>
+  
 
   
 </div>
