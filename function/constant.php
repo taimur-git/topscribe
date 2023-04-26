@@ -172,10 +172,10 @@
 
       if($row['early']==1){
         $this->state = 0;
-      }else if($row['late']==1 || $this->capacity-$this->countRegistered<=0){
-        $this->state = 2;
-      }else{
+      }else if($row['ongoing']==1){
         $this->state = 1;
+      }else{//|| $this->capacity-$this->countRegistered<=0
+        $this->state = 2;
       }
       //if capacity = 1, its a request
       //if a writergroup exists, its an assignment.
@@ -216,7 +216,7 @@
       }
       echo "</div>";
     }
-    function createContestCard($user=-1){
+    function createContestCard($user=-1,$conn=null){
       $bannerurl = $this->bannerURL;
       $title = $this->title;
       $subcategory = $this->subcategoryName;
@@ -228,9 +228,11 @@
       $capacity = $this->capacity;
       $id = $this->id;
       $startTime = $this->startTime;
+      $endTime = $this->endTime;
       $hostFlag = $user == $hostid;
 
       $userWrittenFlag = false;//change this
+      $userRegisterFlag = ifRegisteredToContest($conn,$id,$user);//change this
 
       $card = "
         <div class='card mb-3 contestcard'>
@@ -257,17 +259,36 @@
 
 
       $card .= "<a class='btn btn-info' href='contest.php?id=$id'>View</a>";
+      $registerButton =  "<a class='btn btn-info' href='function/contestRegister.php?cid=$id'>Register</a>";
+      $endButton = "<a class='btn btn-danger' href='function/contestEnd.php?cid=$id'>End Contest</a>";
       if($user!=-1){
         switch($this->state){
+          case 2:
+            break;
           case 0:
-            $card .= $hostFlag?"<a class='btn btn-danger' href='contestEnd.php?cid=$id'>End Contest</a>": "<a class='btn btn-info' href='contestRegister.php?cid=$id'>Register</a>";
+            $card .= $hostFlag?$endButton:"";
+            if(!$hostFlag){
+              if($this->type!=1){
+                  $card .=$userRegisterFlag?"":$registerButton;
+              }
+            }
+            //$card .= $hostFlag?$endButton:$registerButton;
             break;
           case 1:
-            $card .= $hostFlag?"<a class='btn btn-danger' href='contestEnd.php?cid=$id'>End Contest</a>":"<a class='btn btn-info' href='contestRegister.php?cid=$id'>Register</a>";
+            //$card .= $hostFlag?$endButton:"";
             
               if($hostFlag){
+                $card .= $endButton;
                 $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Edit Contest</a>";
               }else{
+                if($this->type!=1){
+                  if($userRegisterFlag){
+                    //$card .= "";
+                  }else{
+                    $card .=$registerButton;
+                  }
+                }
+                
                 if($userWrittenFlag){
                   $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Edit Entry</a>";
                 }else{
@@ -275,8 +296,7 @@
                 }
               }
             break;
-          case 2:
-            break;
+          
           default:
             $statusStr="Error";
         }
@@ -286,7 +306,8 @@
   $card .= "</div>
   <div class='card-footer text-muted'>
     <div>$pill $statusStr</div>
-    $startTime
+    Start : $startTime<br>
+    End: $endTime
   </div>
 
 
@@ -544,7 +565,7 @@ function showAllContest($conn,$user=0){
     while($row = mysqli_fetch_assoc($res)){
       $obj = new Contest();
       $obj->getInfo($row,$conn);
-      $card = $obj->createContestCard($user);
+      $card = $obj->createContestCard($user,$conn);
       echo $card;
     }
 }
@@ -888,10 +909,11 @@ function updateGroupName($conn,$gid,$groupname){
 
 function renderContestEditorBanner($startTime=0,$endTime=0,$banner="images/banner.png"){
   if($startTime==0){
-    $startTime = date("Y-m-d H:i");
+//    $newDate = date('Y-m-d', strtotime(' + 4 months'));
+    $startTime = date("Y-m-d H:i",strtotime(' - 3 month'));
   }
   if($endTime==0){
-    $endTime = date("Y-m-d H:i");
+    $endTime = date("Y-m-d H:i",strtotime(' + 7 days'));
   }
   $str = "  <div id='contest-editor-banner'>
   <h3 style='display:inline;'>Banner</h3>
@@ -1043,9 +1065,22 @@ function submitContestEntry($conn,$cid,$writing_id,$authorID){
   //entry
   $sql = "INSERT INTO `contestwriting` (`contestID`, `writingID`) VALUES ('$cid', '$writing_id')";
   mysqli_query($conn,$sql);
+  //check if author has already registered
+  
+if(!ifRegisteredToContest($conn,$cid,$authorID)){
   registerForContest($conn,$cid,$authorID);
 }
+  
+}
+function ifRegisteredToContest($conn,$cid,$authorID){
+  $sql = "select * from contestusers where contestID='$cid' and writerID='$authorID'";
+  $res = mysqli_query($conn,$sql);
+  return mysqli_num_rows($res)!=0;
 
+}
+function ifWrittenToContest($conn,$cid,$authorID){
+
+}
 function getSubCategoryFromContest($conn,$cid){
   $sql = "SELECT subcategoryID,name,subcategory.description as helpstr  FROM `contest` join subcategory on subcategoryID=subcategory.id where contest.id=$cid";
   $res = mysqli_query($conn,$sql);
