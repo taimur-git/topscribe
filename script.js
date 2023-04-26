@@ -134,6 +134,7 @@ function slideInTopWritings(){
     }
     //remove classes: hidden
     //add classes: animate__animated animate__slideInDown
+}
     
 /*
 function renderView(val){
