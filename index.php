@@ -13,7 +13,10 @@ if(isset($_SESSION['name'])) {
     }else{
         //place here
     //user page
+        include('partial/searchBar.php');
+        echo "<div id='touchThis'>";
         showAllWriting($conn);
+        echo "</div>";
     }
 }else{
     //landing page

@@ -480,10 +480,25 @@ margin-left:1%;
 .items-aligned-center{
   align-items: center;
 }
+.filter-input>*{
+  margin:1%;
+  width: 25%;
+}
 
 #contest-category{
   border: none;
 }
 #contest-category:focus{
   border: none;
+}
+
+
+#addCat{
+  float: right;
+  margin-right: 10%;
+}
+
+#addSubCat{
+  float: right;
+  margin-right: 5%;
 }

@@ -331,6 +331,20 @@ return $card;
   //show any users writings - profile reliant 
 
   //
+  function breakSearchTerm($search,$query="concat(nvl(topics,''),title,t1.username,t1.subcategory)"){
+    //split the search into constituent words.
+    // where concat(topics,title,t1.username) like '%taimur%' and concat(topics,title,t1.username) like '%gpt%'
+    $data   = preg_split('/\s+/', $search);
+    //$sql = "where ";
+    $sql =" ";
+    foreach($data as $searchTerm){
+        $sql1 = $query." like '%$searchTerm%' ";
+        $sql1.="and ";
+        $sql.=$sql1;
+    }
+    $sql = trim($sql,"and ");
+    return $sql;
+  }
   function showAllWriting($conn, $case=0,$user=0,$search='',$order=0,$asc=1,$top=0,$echoFlag=true){
     $flag = true;
     $flag2 = false;
@@ -397,7 +411,8 @@ return $card;
           $sql .= "where t1.status = 0 ";
 
       }
-      $sql .= " and (topics like '%$search%' or title like '%$search%' or t1.username like '%$search%') ";
+      $sql .= " and ".breakSearchTerm($search);
+      //" and concat(topics,title,t1.username) like '%$search%' ";
       //$sql .= " ";
       //public writings.
       switch($order){
@@ -739,7 +754,7 @@ $inputbar = "
 ";
 
       $html = "<div class='form-check form-switch'>
-        <input class='form-check-input' type='checkbox' id='flexSwitchCheckChecked' onclick='boxClicked()'>
+        <input class='form-check-input' type='checkbox' id='flexSwitchCheckChecked' name='autogen' onclick='boxClicked()'>
         <label class='form-check-label' for='flexSwitchCheckChecked'>Automatically generate topics</label>
       </div> ";
       $html .= "<div id='topicDiv'>";
