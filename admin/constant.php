@@ -146,6 +146,11 @@ function approveFuture($conn,$userID){
     approveAllForUser($conn,$userID);
 }
 
+function deleteContest($conn,$cid){
+    $sql = "DELETE FROM contest WHERE `contest`.`id` = '$cid'";
+    mysqli_query($conn,$sql);
+}
+
 function deleteUnusedTopics($conn){
     //finds topics that dont exist in topicwriting
     //deletes them.

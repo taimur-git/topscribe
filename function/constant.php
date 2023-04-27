@@ -115,6 +115,10 @@
       $sql = "where contest.id='$id'";
       return Contest::getBaseSQL().$sql;
     }
+    public static function getAcceptedContests($flag=true){
+      $sql = $flag ? "where accepted=1" : "where accepted=0";
+      return Contest::getBaseSQL().$sql;
+    }
     function returnPieChart(){
       $mark = $this->countMarked;
       $sub = $this->countEntries - $this->countMarked;
@@ -310,6 +314,7 @@
       $userRegisterFlag = ifRegisteredToContest($conn,$id,$user);
       $hostFlag = $user == $hostid;
       $guestFlag = $user == -1;
+      $adminFlag = $user == 0;
       $assignmentNotFlag = $this->type!=1;
 
       $card = $inContest ? "<a class='btn btn-info' href='browse.php'>Back</a>" : "<a class='btn btn-info' href='contest.php?id=$id'>View</a>";
@@ -318,7 +323,18 @@
       $enterButton = "<a class='btn btn-info' href='editor.php?cid=$id'>Enter</a>";
       $editEntryButton = "<a class='btn btn-info disabled' href='edit.php?id='>Edit Entry</a>";
       $editContestButton = "<a class='btn btn-info disabled' href='discover.php?cid=$id'>Edit Contest</a>";
-      $unregisterButton = "";
+      $unregisterButton = "<a class='btn btn-info disabled' href='unregister.php?cid=$id'>Unregister</a>";
+
+      $approveAllButton = "<a class='btn btn-info' href='function/approveContest.php?id=3&cid=$hostid'>Approve All Now</a>";
+      $approveFutureButton = "<a class='btn btn-info' href='function/approveContest.php?id=2&cid=$hostid'>Approve Future</a>";
+      $approveContestButton = "<a class='btn btn-info' href='function/approveContest.php?id=1&cid=$id'>Approve</a>";
+      $denyButton = "<a class='btn btn-danger ' href='function/deleteContest.php?cid=$id'>Deny</a>";
+      /*
+       approveAllForUser()
+    approveContest()
+    approveFuture()
+       */
+      $adminPanel = "<div>".$card.$approveContestButton.$denyButton."</div><div>".$approveAllButton.$approveFutureButton."</div>";
 
       $userButton = $userRegisterFlag ? $unregisterButton : $registerButton;
       $userButton2 = $userWrittenFlag ? $editEntryButton : $enterButton;
@@ -328,6 +344,7 @@
       //figure out who the user is.
       //if its a guest, do nothing.
       if($guestFlag){return $card;}
+      if($adminFlag){return $adminPanel;}
       //if its the host, give them their buttons.
       if($hostFlag){
         switch($state){
@@ -387,57 +404,9 @@
       }
     
       $card .= $this->type==0 ? "<span class='badge bg-primary rounded-pill'>$registered":"";
-
       $card .= $this->type==0&&$capacity > 1 ? "/$capacity ":""; 
-
       $card .= $this->type==0 ? " registered</span></p>":"</p>";
-
-
       $card .= $this->createButtons($user,$conn,false);
-      /*"<a class='btn btn-info' href='contest.php?id=$id'>View</a>";
-      $registerButton =  "<a class='btn btn-info' href='function/contestRegister.php?cid=$id'>Register</a>";
-      $endButton = "<a class='btn btn-danger disabled' href='function/contestEnd.php?cid=$id'>End Contest</a>";
-      if($user!=-1){
-        switch($this->state){
-          case 2:
-            break;
-          case 0:
-            $card .= $hostFlag?$endButton:"";
-            if(!$hostFlag){
-              if($this->type!=1){
-                  $card .=$userRegisterFlag?"":$registerButton;
-              }
-            }
-            //$card .= $hostFlag?$endButton:$registerButton;
-            break;
-          case 1:
-            //$card .= $hostFlag?$endButton:"";
-            
-              if($hostFlag){
-                $card .= $endButton;
-                $card .= "<a class='btn btn-info disabled' href='editor.php?cid=$id'>Edit Contest</a>";
-              }else{
-                if($this->type!=1){
-                  if($userRegisterFlag){
-                    //$card .= "";
-                  }else{
-                    $card .=$registerButton;
-                  }
-                }
-                
-                if($userWrittenFlag){
-                  $card .= "<a class='btn btn-info disabled' href='editor.php?cid=$id'>Edit Entry</a>";
-                }else{
-                  $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Enter</a>";
-                }
-              }
-            break;
-          
-          default:
-            $statusStr="Error";
-        }
-      }
-      */
   $pill=createPill($this->typeStr[$this->type]);
   $statusStr = createPill($this->stateStr[$this->state],false);
   $card .= "</div>
@@ -456,23 +425,10 @@ return $card;
 
   }
   
-  //needs profile view
-  //show all writings - guest/user whatever
-  //show your bookmarks - user reliant
-
-  //no need for profile view
-  //show your public writings - user reliant
-  //show your private
-  //show your anonymous *
-
-  //show any users writings - profile reliant 
-
-  //
   function breakSearchTerm($search,$query="concat(nvl(topics,''),title,t1.username,t1.subcategory)"){
     //split the search into constituent words.
     // where concat(topics,title,t1.username) like '%taimur%' and concat(topics,title,t1.username) like '%gpt%'
     $data   = preg_split('/\s+/', $search);
-    //$sql = "where ";
     $sql =" ";
     foreach($data as $searchTerm){
         $sql1 = $query." like '%$searchTerm%' ";
@@ -715,7 +671,8 @@ echo $card;
 }
 
 function showAllContest($conn,$user=0){
-    $sql = Contest::getBaseSQL();
+    //$sql = Contest::getBaseSQL();
+    $sql = Contest::getAcceptedContests($user!=0);
     $res = mysqli_query($conn,$sql);
     while($row = mysqli_fetch_assoc($res)){
       $obj = new Contest();
@@ -739,11 +696,11 @@ function renderContestListView($conn,$user=0,$host=true){
 }
 
 function createContest($conn, $title, $description,$host,$subcategoryID=19,$capacity=null,$start=null,$end=null,$judges=null,$classroom=null,$bannerURL="images/banner.png"){
-  $accepted = 0; //check is host is allowed or not
+  $accepted = allowedToHost($conn,$host); //check is host is allowed or not
   $sql = $start==null ? 
   "insert into contest
-  (title, description,hostID,subcategoryID)
-  value ('$title' , '$description','$host','$subcategoryID')"
+  (title, description,hostID,accepted,subcategoryID)
+  value ('$title' , '$description','$host','$accepted','$subcategoryID')"
   : 
   "insert into contest
   (title, description, start,end,capacity,judgeGroup,writerGroup,hostID,accepted,subcategoryID,bannerurl)
@@ -753,13 +710,12 @@ function createContest($conn, $title, $description,$host,$subcategoryID=19,$capa
     $contest_id = mysqli_insert_id($conn);
 
     //from the $classroom variable, already register students.
+    /*
     if($classroom!=null||$classroom!=0){
       $sql = "INSERT into contestusers(contestID,writerID)
         select '$contestID',userid from grouplist 
         where groupID = '$classroom'";
-        //TO-DO
-        //ALSO MAJOR ISSUE: IF GROUPS CHANGE, THIS SHOULD ALSO CHANGE DYNAMICALLY.
-    }
+    }*/
 
     return $contest_id;
 }
@@ -1332,10 +1288,11 @@ function createUserDropdown($conn,$id){
             <div class='dropdown-divider'></div>
             <a class='dropdown-item' href='discover.php'>Host a Contest</a>
             <div class='dropdown-divider'></div>
+            <a class='dropdown-item' href='users.php'>User List</a>
             <a class='dropdown-item' href='user.php'>My Writings</a>
-            <a class='dropdown-item' href='contacts.php'>Bookmarks</a>
+            <a class='dropdown-item' href='user.php'>Bookmarks</a>
             <a class='dropdown-item' href='user.php'>Hosted Contests</a>
-            <a class='dropdown-item' href='contacts.php'>Joined Contests</a>
+            <a class='dropdown-item' href='user.php'>Joined Contests</a>
             <div class='dropdown-divider'></div>
             <a class='dropdown-item' href='function/logout.php'>Log Out</a>
           </div>
@@ -1370,6 +1327,13 @@ function returnTextFromWriting($conn,$id){
   $body = $row['body'];
   return $body;
 }
+function allowedToHost($conn,$id){
+  $sql = "SELECT canHost FROM `usernames` where id = '$id'";
+  $res = mysqli_query($conn,$sql);
+  $row = mysqli_fetch_assoc($res);
+  $canHost = $row['canHost'];
+  return $canHost;
+  }
 ?>
 
 

@@ -3,7 +3,6 @@ include('constant.php');
 
 //echo "test";
 ?>
-<h1>Statistics</h1>
 <div class="card text-white bg-primary mb-3 text-white2">
   <div class="card-header"><h2><?php countUser($conn);?></h2></div>
   <div class="card-body">
@@ -28,7 +27,6 @@ include('constant.php');
   </div>
 </div>
 
-<h1>Actions</h1>
 
 
 <?php
