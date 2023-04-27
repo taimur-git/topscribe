@@ -7,12 +7,14 @@ $scoreString = returnScoreList($conn,$id);
 <!--script type="text/javascript" src="scripts/contest.js"></script-->
 <div class="jumbotron jumbotron-fluid">
   <div class="container">
-    <h1 class="display-4">Title</h1>
-    <p class="lead">Description</p>
+    <h1 class="display-4"><?php echo $obj->title;?></h1>
+    <p class="lead"><?php echo $obj->description;?></p>
     <!--p>Host<p-->
     <p>Judges: 
-        <span class="badge rounded-pill bg-dark">Taimur (host)</span>
-        <span class="badge rounded-pill bg-dark">Tamim</span></p>
+        <span class="badge rounded-pill bg-light"><?php 
+        echo "<a href='user.php?id=$obj->hostID'>$obj->hostName</a>";
+        ?> (host)</span>
+        <?php echo $obj->returnListOfJudges() ?>
   </div>
 </div>
 
@@ -48,7 +50,10 @@ $scoreString = returnScoreList($conn,$id);
     },
       scales: {
         y: {
-          beginAtZero: true
+          beginAtZero: true,
+          ticks: {
+            precision: 0
+          }
         },
         x: {
             title: {

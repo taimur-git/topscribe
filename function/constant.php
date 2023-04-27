@@ -114,7 +114,13 @@
       $sql = "where contest.id='$id'";
       return Contest::getBaseSQL().$sql;
     }
-
+    function returnListOfJudges(){
+      while($row = mysqli_fetch_assoc($this->judges)){
+          $id = $row['id'];
+          $user = $row['username'];
+          echo "<span class='badge rounded-pill bg-light'><a href='user.php?id=$id'>$user</a></span>";
+      }    
+    }
     function getExtraInfo($conn){
       $id = $this->id;
       /*
