@@ -1,0 +1,33 @@
+{
+    "name": "rodchyn/markdown2pdf",
+    "description": "Markdown to PDF converter",
+    "type": "library",
+
+    "repositories": [
+        {
+            "type": "git",
+            "url": "../superscript"
+        }
+    ],
+
+    "require": {
+        "erusev/parsedown-extra": "^0.7.1",
+        "dompdf/dompdf": "^0.8.3",
+        "rodchyn/superscript": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Markdown\\": "src/"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yura Rodchyn",
+            "email": "rodchyn@gmail.com"
+        }
+    ]
+}

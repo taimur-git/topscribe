@@ -22,7 +22,7 @@
             and global position as a writer.<br>
             That’s where various writing<br>
             contests comes into play!</p>
-            <a href="browse.php"><button type="button" class="btn btn-info landing_btn2">Contest <span></span><i class="fa-solid fa-pen-nib"></i></button></a>
+            <a href="browse.php"><button type="button" class="btn btn-info landing_btn2">Contests <span></span><i class="fa-solid fa-pen-nib"></i></button></a>
         </div>
         <div class="scroll-area" onmouseover='slideInTopWritings()'>
             <h1 class="landing_heads">
@@ -41,5 +41,6 @@
             <?php
                 showAllWriting($conn, 0,0,'',0,1,3);
             ?>
+            <a href="writings.php"><button type="button" class="btn btn-success landing_btn1">See more! <span></span><i class="fa-solid fa-circle-arrow-right"></i></button></a>
         </div>
     </div>   

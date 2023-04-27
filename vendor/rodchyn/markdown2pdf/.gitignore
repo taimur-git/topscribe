@@ -1,0 +1,4 @@
+/examples/*rel*
+/vendor/
+/.idea/
+.DS_Store

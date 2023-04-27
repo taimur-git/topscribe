@@ -22,10 +22,13 @@ if($user!=-1){
     if($writer == $user){
         ///something
         //<button href = 'editWriting?id=$id'>
-        echo "<button class=cleanbutton><i class='fa-solid fa-pen-to-square'></i></button>";
+        echo "<button class='cleanbutton disabled' href='edit?id=$id'><i class='fa-solid fa-pen-to-square'></i></button>";
         echo "<button onclick='deleteWriting($id)' class=cleanbutton><i class='fa-solid fa-trash'></i></button>";
     }else{
-        echo "<button class=cleanbutton onclick='addContact($writer)'><i class='fa-solid fa-user-plus'></i></button>";
+        $added = returnIfAdded($conn,$writer,$user);
+        echo $added?
+        "<button class=cleanbutton onclick='removeContact($writer)'><i class='fa-solid fa-user-minus'></i></button>"
+        :"<button class=cleanbutton onclick='addContact($writer)'><i class='fa-solid fa-user-plus'></i></button>";
     }
     
 }
@@ -34,7 +37,7 @@ echo "<button type='button' class=cleanbutton data-bs-container='body' data-bs-t
 data-bs-placement='bottom' data-bs-content='$url' onclick='copyToClipboard()'>
 <i class='fa-solid fa-link'></i>
 </button>";
-echo "<button type='button' class=cleanbutton onclick='downloadPDF()'><i class='fa-solid fa-download'></i></button>";
+//echo "<a type='button' class=cleanbutton href='function/downloadPDF.php?id=$id'><i class='fa-solid fa-download'></i></a>";
 $topics = returnTags($conn,$id);
 echo "<p>$topics</p>";
 

@@ -537,3 +537,8 @@ width: 33%;
 -webkit-clip-path: polygon(0 0, 100% 0, 100% 24%, 0 24%); clip-path: polygon(0 0, 100% 0, 100% 24%, 0 24%);
 }
 */
+
+.halfDiv{
+  width: 50%;
+  float: left;
+}

@@ -40,18 +40,20 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 justify-content-center">
 
-        <?php if(!isset($_SESSION['name'])){?>
-        <!--guest view-->
-                <li><a class="nav-link" aria-current="page" href="index.php">Home</a></li>
-                <li><a class="nav-link" aria-current="page" href="editor.php">Editor</a></li>
-                <li><a class="nav-link" aria-current="page" href="browse.php">Browse</a></li>
-            <?php }
+        <?php if(!isset($_SESSION['name'])){
+            echo createNavElement("index.php","home",0);
+            echo createNavElement("editor.php","write",1);
+            //echo createNavElement(".php","browse",2);
+            echo createNavElement("browse.php","contests",3);
+            echo createNavElement("writings.php","writings",2);
+            }
             else if($_SESSION['id'] != 0){ 
                 echo createUserDropdown($conn,$id);
                 echo createNavElement("index.php","home",0);
                 echo createNavElement("editor.php","write",1);
                 //echo createNavElement(".php","browse",2);
                 echo createNavElement("browse.php","contests",3);
+                //echo createNavElement("discover.php","contests",3);
                 ?>
                 <!--user view-->
                 <!--

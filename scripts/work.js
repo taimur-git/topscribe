@@ -10,3 +10,6 @@ var simplemde = new SimpleMDE({
     console.log('callback - particles.js config loaded');
   });
 
+ function downloadPDF(){
+let x = simplemde.value();
+ }

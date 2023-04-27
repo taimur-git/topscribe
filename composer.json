@@ -1,9 +1,7 @@
 {
     "require": {
-        "thiagoalessio/tesseract_ocr": "^2.12",
-        "cebe/markdown-latex": "*",
-        "phpoffice/phpword": "^1.0",
-        "copyleaks/php-plagiarism-checker": "^3.2",
-        "textrazor/textrazor-php": "^1.0"
+        "textrazor/textrazor-php": "^1.0",
+        "rodchyn/markdown2pdf": "^1.0",
+        "dompdf/dompdf": "^0.8.3"
     }
 }

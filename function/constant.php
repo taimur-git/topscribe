@@ -90,6 +90,7 @@
     
     public $countRegistered;
     public $countEntries;
+    public $countMarked;
     //sql tables 
     public $contestEntries;
     public $judges;
@@ -114,12 +115,34 @@
       $sql = "where contest.id='$id'";
       return Contest::getBaseSQL().$sql;
     }
+    function returnPieChart(){
+      $mark = $this->countMarked;
+      $sub = $this->countEntries - $this->countMarked;
+      $reg = $this->countRegistered - $this->countEntries;
+      return "[$reg,$sub,$mark]";
+      
+      //['Registered','Submitted','Marked']
+    }
     function returnListOfJudges(){
       while($row = mysqli_fetch_assoc($this->judges)){
           $id = $row['id'];
           $user = $row['username'];
           echo "<span class='badge rounded-pill bg-light'><a href='user.php?id=$id'>$user</a></span>";
       }    
+    }
+    function returnListOfContestants(){
+      $flag2 = true;
+      $flag = $this->type!=1;
+      $sql = $flag ? $this->registered : $this->writers;
+      while($row = mysqli_fetch_assoc($sql)){
+        $flag2 = false;
+        $id = $row['id'];
+        $user = $row['username'];
+        echo "<span class='badge rounded-pill bg-light'><a href='user.php?id=$id'>$user</a></span>";
+      } 
+      if($flag2){
+        echo "<p>No participants.</p>";
+      }
     }
     function getExtraInfo($conn){
       $id = $this->id;
@@ -130,12 +153,12 @@
        FROM `contestwriting` 
       join writing on writingID=writing.id left join marks on contestwriting.writingID=marks.writingID where contestID='$id'";
       */
-      $sql = "SELECT contestID,id,title,body,authorID,datePublished,avg(score),
+      $sql1 = "SELECT contestID,id,title,body,authorID,datePublished,avg(score),
       left(body,100) as blurb,
       round((length(trim(body))+240)/1440,0) as readtime
        FROM `contestwriting` 
       join writing on writingID=writing.id left join marks on contestwriting.writingID=marks.writingID where contestID='$id' group by contestwriting.writingID";
-      $this->contestEntries = mysqli_query($conn,$sql);
+      $this->contestEntries = mysqli_query($conn,$sql1);
       
       $sql = "SELECT * FROM `contestusers` join usernames on writerID=usernames.id where contestid='$id'";
       $this->registered = mysqli_query($conn,$sql);
@@ -149,6 +172,23 @@
 
       $this->countEntries = mysqli_num_rows($this->contestEntries);
       $this->countRegistered = $this->type==1 ?mysqli_num_rows($this->writers):mysqli_num_rows($this->registered);
+      //$this->getMarkCount();
+
+      $i = 0;
+      //$this->countMarked;
+      $res = mysqli_query($conn,$sql1);
+      while($row = mysqli_fetch_assoc($res)){
+        $obj = new Writing();
+        $obj->generate2($row);
+        if($obj->marks!=null){
+          $i = $i + 1;
+        }
+        //echo printContestEntry($obj);
+      }
+      $this->countMarked = $i;
+
+
+
     }
     function getInfoByID($cid,$conn){
       $this->id = $cid;
@@ -156,6 +196,21 @@
       $res = mysqli_query($conn,$sql);
       $row = mysqli_fetch_assoc($res);
       $this->getInfo($row,$conn);
+    }
+    function getMarkCount(){
+      $i = 0;
+      //$this->countMarked;
+      
+      $res = $this->contestEntries;
+      while($row = mysqli_fetch_assoc($res)){
+        $obj = new Writing();
+        $obj->generate2($row);
+        if($obj->marks!=null){
+          $i = $i + 1;
+        }
+        //echo printContestEntry($obj);
+      }
+      $this->countMarked = $i;
     }
     function getInfo($row,$conn){
       
@@ -196,6 +251,28 @@
 
       $this->getExtraInfo($conn);
     }
+
+    function returnScoreList2($conn){
+      $id = $this->id;
+      $arr = array_fill(0,11,0);
+      $sql = "select ceil(t1.marks) as score,count(t1.id) as contestants from (SELECT id,avg(score) as marks
+           FROM `contestwriting` 
+          join writing on writingID=writing.id 
+          left join marks on contestwriting.writingID=marks.writingID 
+          where contestID='$id' group by contestwriting.writingID)t1 group by ceil(t1.marks)";
+          $res = mysqli_query($conn,$sql);
+    
+          while($row = mysqli_fetch_assoc($res)){
+            $x = $row['score'];
+            $y = $row['contestants'];
+            if($x!=null){$arr[$x]=$y;}
+          }
+          
+          return str_replace('"', '', json_encode($arr));
+    
+    
+    }
+
     function createContestListItem(){
       return contestListItem(
         $this->id,
@@ -211,6 +288,7 @@
     }
     function printEntries($conn){
       //getInfoByID($id,$conn);
+      $flag = true;
       echo "<div class='list-group'>";
       //$sql = $this->contestEntries;
       //$res = mysqli_query($conn,$sql);
@@ -219,8 +297,59 @@
         $obj = new Writing();
         $obj->generate2($row);
         echo printContestEntry($obj);
+        $flag = false;
       }
+      if($flag){echo "<p>There are no entries.</p>";}
       echo "</div>";
+    }
+    function createButtons($user=-1,$conn=null,$inContest=true){
+      $id = $this->id;
+      $hostid = $this->hostID;
+      $state = $this->state;
+      $userWrittenFlag = ifWrittenToContest($conn,$id,$user);//change this
+      $userRegisterFlag = ifRegisteredToContest($conn,$id,$user);
+      $hostFlag = $user == $hostid;
+      $guestFlag = $user == -1;
+      $assignmentNotFlag = $this->type!=1;
+
+      $card = $inContest ? "<a class='btn btn-info' href='browse.php'>Back</a>" : "<a class='btn btn-info' href='contest.php?id=$id'>View</a>";
+      $registerButton =  "<a class='btn btn-info' href='function/contestRegister.php?cid=$id'>Register</a>";
+      $endButton = "<a class='btn btn-danger disabled' href='function/contestEnd.php?cid=$id'>End Contest</a>";
+      $enterButton = "<a class='btn btn-info' href='editor.php?cid=$id'>Enter</a>";
+      $editEntryButton = "<a class='btn btn-info disabled' href='edit.php?id='>Edit Entry</a>";
+      $editContestButton = "<a class='btn btn-info disabled' href='discover.php?cid=$id'>Edit Contest</a>";
+      $unregisterButton = "";
+
+      $userButton = $userRegisterFlag ? $unregisterButton : $registerButton;
+      $userButton2 = $userWrittenFlag ? $editEntryButton : $enterButton;
+
+      $assignmentButton = $assignmentNotFlag ? $userButton : "";
+
+      //figure out who the user is.
+      //if its a guest, do nothing.
+      if($guestFlag){return $card;}
+      //if its the host, give them their buttons.
+      if($hostFlag){
+        switch($state){
+          case 1:
+            $card .= $editContestButton;
+          case 0:
+            $card .= $endButton;
+        }
+      }else{
+          //if its not the host, give them their buttons.
+          switch($state){
+            case 0:
+              $card .= $assignmentButton;
+              break;
+            case 1:
+              $card .= $assignmentButton;
+              $card .= $userButton2;
+              break;
+          }
+      }
+      
+      return $card;
     }
     function createContestCard($user=-1,$conn=null){
       $bannerurl = $this->bannerURL;
@@ -264,9 +393,10 @@
       $card .= $this->type==0 ? " registered</span></p>":"</p>";
 
 
-      $card .= "<a class='btn btn-info' href='contest.php?id=$id'>View</a>";
+      $card .= $this->createButtons($user,$conn,false);
+      /*"<a class='btn btn-info' href='contest.php?id=$id'>View</a>";
       $registerButton =  "<a class='btn btn-info' href='function/contestRegister.php?cid=$id'>Register</a>";
-      $endButton = "<a class='btn btn-danger' href='function/contestEnd.php?cid=$id'>End Contest</a>";
+      $endButton = "<a class='btn btn-danger disabled' href='function/contestEnd.php?cid=$id'>End Contest</a>";
       if($user!=-1){
         switch($this->state){
           case 2:
@@ -285,7 +415,7 @@
             
               if($hostFlag){
                 $card .= $endButton;
-                $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Edit Contest</a>";
+                $card .= "<a class='btn btn-info disabled' href='editor.php?cid=$id'>Edit Contest</a>";
               }else{
                 if($this->type!=1){
                   if($userRegisterFlag){
@@ -296,7 +426,7 @@
                 }
                 
                 if($userWrittenFlag){
-                  $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Edit Entry</a>";
+                  $card .= "<a class='btn btn-info disabled' href='editor.php?cid=$id'>Edit Entry</a>";
                 }else{
                   $card .= "<a class='btn btn-info' href='editor.php?cid=$id'>Enter</a>";
                 }
@@ -307,6 +437,7 @@
             $statusStr="Error";
         }
       }
+      */
   $pill=createPill($this->typeStr[$this->type]);
   $statusStr = createPill($this->stateStr[$this->state],false);
   $card .= "</div>
@@ -912,7 +1043,7 @@ function createContactString($id,$imgurl,$friend){
       <img class='profile-pic' src='$imgurl'>
       </div>
       <div class='contact-name'>
-      <h5>$friend</h5>
+      <h5><a href='user.php?id=$id'>$friend</a></h5>
       </div></div>";
 }
 
@@ -1103,7 +1234,11 @@ function ifRegisteredToContest($conn,$cid,$authorID){
 
 }
 function ifWrittenToContest($conn,$cid,$authorID){
-
+  $sql = "SELECT * FROM `contestwriting` 
+ join writing on writingID=writing.id 
+ where contestID='$cid' and authorID='$authorID'";
+$res = mysqli_query($conn,$sql);
+return mysqli_num_rows($res)!=0;
 }
 function getSubCategoryFromContest($conn,$cid){
   $sql = "SELECT subcategoryID,name,subcategory.description as helpstr  FROM `contest` join subcategory on subcategoryID=subcategory.id where contest.id=$cid";
@@ -1195,6 +1330,8 @@ function createUserDropdown($conn,$id){
             <a class='dropdown-item' href='user.php'>Dashboard</a>
             <a class='dropdown-item' href='contacts.php'>Contacts</a>
             <div class='dropdown-divider'></div>
+            <a class='dropdown-item' href='discover.php'>Host a Contest</a>
+            <div class='dropdown-divider'></div>
             <a class='dropdown-item' href='user.php'>My Writings</a>
             <a class='dropdown-item' href='contacts.php'>Bookmarks</a>
             <a class='dropdown-item' href='user.php'>Hosted Contests</a>
@@ -1224,6 +1361,14 @@ function returnScoreList($conn,$id){
       return str_replace('"', '', json_encode($arr));
 
 
+}
+
+function returnTextFromWriting($conn,$id){
+  $sql ="SELECT body FROM `writing` where id='$id' ";
+  $res = mysqli_query($conn,$sql);
+  $row = mysqli_fetch_assoc($res);
+  $body = $row['body'];
+  return $body;
 }
 ?>
 

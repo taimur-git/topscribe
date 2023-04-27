@@ -6,60 +6,64 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit274e754f7692d2524f902f50e69ffbdd
 {
-    public static $files = array (
-        '077c46ea4b0fe94d4bac6ac6d1c848fe' => __DIR__ . '/..' . '/copyleaks/php-plagiarism-checker/autoload.php',
-    );
-
     public static $prefixLengthsPsr4 = array (
-        't' => 
+        'S' => 
         array (
-            'thiagoalessio\\TesseractOCR\\' => 27,
+            'Svg\\' => 4,
+            'Superscript\\' => 12,
+            'Sabberworm\\CSS\\' => 15,
         ),
-        'c' => 
+        'M' => 
         array (
-            'cebe\\markdown\\latex\\' => 20,
-            'cebe\\markdown\\' => 14,
+            'Markdown\\' => 9,
         ),
-        'P' => 
+        'F' => 
         array (
-            'PhpOffice\\PhpWord\\' => 18,
+            'FontLib\\' => 8,
         ),
-        'L' => 
+        'D' => 
         array (
-            'Laminas\\Escaper\\' => 16,
+            'Dompdf\\' => 7,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'thiagoalessio\\TesseractOCR\\' => 
+        'Svg\\' => 
         array (
-            0 => __DIR__ . '/..' . '/thiagoalessio/tesseract_ocr/src',
+            0 => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg',
         ),
-        'cebe\\markdown\\latex\\' => 
+        'Superscript\\' => 
         array (
-            0 => __DIR__ . '/..' . '/cebe/markdown-latex',
+            0 => __DIR__ . '/..' . '/rodchyn/superscript/src',
         ),
-        'cebe\\markdown\\' => 
+        'Sabberworm\\CSS\\' => 
         array (
-            0 => __DIR__ . '/..' . '/cebe/markdown',
+            0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/src',
         ),
-        'PhpOffice\\PhpWord\\' => 
+        'Markdown\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
+            0 => __DIR__ . '/..' . '/rodchyn/markdown2pdf/src',
         ),
-        'Laminas\\Escaper\\' => 
+        'FontLib\\' => 
         array (
-            0 => __DIR__ . '/..' . '/laminas/laminas-escaper/src',
+            0 => __DIR__ . '/..' . '/phenx/php-font-lib/src/FontLib',
+        ),
+        'Dompdf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dompdf/dompdf/src',
         ),
     );
 
     public static $prefixesPsr0 = array (
-        'M' => 
+        'P' => 
         array (
-            'MikeVanRiel' => 
+            'ParsedownExtra' => 
             array (
-                0 => __DIR__ . '/..' . '/mikevanriel/text-to-latex/src',
-                1 => __DIR__ . '/..' . '/mikevanriel/text-to-latex/tests/unit',
+                0 => __DIR__ . '/..' . '/erusev/parsedown-extra',
+            ),
+            'Parsedown' => 
+            array (
+                0 => __DIR__ . '/..' . '/erusev/parsedown',
             ),
         ),
     );
@@ -68,7 +72,13 @@ class ComposerStaticInit274e754f7692d2524f902f50e69ffbdd
         'AccountManager' => __DIR__ . '/..' . '/textrazor/textrazor-php/TextRazor.php',
         'ClassifierManager' => __DIR__ . '/..' . '/textrazor/textrazor-php/TextRazor.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Cpdf' => __DIR__ . '/..' . '/dompdf/dompdf/lib/Cpdf.php',
         'DictionaryManager' => __DIR__ . '/..' . '/textrazor/textrazor-php/TextRazor.php',
+        'HTML5_Data' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Data.php',
+        'HTML5_InputStream' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/InputStream.php',
+        'HTML5_Parser' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Parser.php',
+        'HTML5_Tokenizer' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Tokenizer.php',
+        'HTML5_TreeBuilder' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/TreeBuilder.php',
         'TextRazor' => __DIR__ . '/..' . '/textrazor/textrazor-php/TextRazor.php',
         'TextRazorConnection' => __DIR__ . '/..' . '/textrazor/textrazor-php/TextRazor.php',
         'TextRazorQueryBuilder' => __DIR__ . '/..' . '/textrazor/textrazor-php/TextRazor.php',

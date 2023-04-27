@@ -10,6 +10,6 @@ $user = isset($_SESSION['id'])?$_SESSION['id']:-1;
 $obj = new Contest();
 $obj->getInfoByID($id,$conn);
 include('partial/contestView.php');
-$obj->printEntries($conn);
+
 ?>
 <?php include('partial/footer.php');?>
