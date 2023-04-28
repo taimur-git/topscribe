@@ -3,6 +3,12 @@ include('constant.php');
 
 //echo "test";
 ?>
+<style>
+  body{
+    background-image: url('images/article_pic2.jpg');
+    background-size: cover;
+  }
+  </style>
 <div class="card text-white bg-primary mb-3 text-white2">
   <div class="card-header"><h2><?php countUser($conn);?></h2></div>
   <div class="card-body">
