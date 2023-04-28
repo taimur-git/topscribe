@@ -14,11 +14,15 @@ if($user == $page){
 
 echo "<div class='accordion' id='accordionParent'>";
 echo createAccordionItem(1,"Own writings",showAllWriting($conn, 3,$user,'' , 0, 1, 0,false));
+echo createAccordionItem(7,"Private writings",showAllWriting($conn, 4,$user,'' , 0, 1, 0,false));
 echo createAccordionItem(2,"Bookmarks",showAllWriting($conn, 2,$user,'' , 0, 1, 0,false));
 echo createAccordionItem(3,"Contest Entries",showAllWriting($conn, 5,$user,'' , 0, 1, 0,false));
+/*
+echo "<h2>--Under construction--</h2>";
 echo createAccordionItem(4,"Registered Contests","");
 echo createAccordionItem(5,"Hosted Contests",renderContestListView($conn,$user,));
 echo createAccordionItem(6,"Judging Contests",renderContestListView($conn,$user,false));
+*/
 echo "</div>";
 
 

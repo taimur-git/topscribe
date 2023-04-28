@@ -485,6 +485,7 @@ return $card;
           break;
         case 3:
           //someone's public writings
+          //$sql .= "where t1.authorID = '$user' and t1.status = '0' ";
           $sql .= "where t1.authorID = '$user' and t1.status = '0' ";
           $flag = false;
           break;
@@ -838,12 +839,12 @@ $privacy = $contestFlag?"":"<fieldset>
   <label for='1'>Private</label>
 </div>
 
-<div>
+
+</fieldset>";
+/*<div>
   <input type='radio' id='anonymous' value='2' name='audience'>
   <label for='2'>Anonymous</label>
-</div>
-</fieldset>";
-
+</div> */
 $inputbar = "
 <input type='text' size='30' onkeyup='lookupTopic(this.value)' id='topic-input'>
 <div id='livesearch'></div>
@@ -1283,16 +1284,11 @@ function createUserDropdown($conn,$id){
   $str = "<li class='nav-item dropdown'>
           <a class='nav-link dropdown-toggle profileButton' data-bs-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='false'>$image $username</a>
           <div class='dropdown-menu'>
-            <a class='dropdown-item' href='user.php'>Dashboard</a>
+            <a class='dropdown-item' href='user.php'>User Page</a>
             <a class='dropdown-item' href='contacts.php'>Contacts</a>
+            <a class='dropdown-item' href='users.php'>User List</a>
             <div class='dropdown-divider'></div>
             <a class='dropdown-item' href='discover.php'>Host a Contest</a>
-            <div class='dropdown-divider'></div>
-            <a class='dropdown-item' href='users.php'>User List</a>
-            <a class='dropdown-item' href='user.php'>My Writings</a>
-            <a class='dropdown-item' href='user.php'>Bookmarks</a>
-            <a class='dropdown-item' href='user.php'>Hosted Contests</a>
-            <a class='dropdown-item' href='user.php'>Joined Contests</a>
             <div class='dropdown-divider'></div>
             <a class='dropdown-item' href='function/logout.php'>Log Out</a>
           </div>
