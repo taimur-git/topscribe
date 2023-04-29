@@ -8,7 +8,7 @@ if($contestFlag){
 }else{
     echo "<form action='function/publish.php' method='post'>";
 }
-
+$guestFlag = !isset($_SESSION['name']);
 
 
 
@@ -42,12 +42,12 @@ if($contestFlag){
     </div>
 
 <?php
-createTopicInput($contestFlag);
+createTopicInput($contestFlag,$guestFlag);
 ?>
 
     <div class="d-grid gap-2">
 <?php
-    if(isset($_SESSION['name'])) {
+    if(!$guestFlag) {
         //place here 	//0 - publish 1 - anonymous 2 - hidden 3 - draft
         echo "<input type='hidden' id='hidetopic' name='topics' value=''>";
         if($contestFlag){
