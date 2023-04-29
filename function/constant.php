@@ -824,8 +824,8 @@ function returnDescriptionSubCategory($conn,$subID){
   $description = $row['description'];
   return $description;
 }
-function createTopicInput($contestFlag=false){
-$privacy = $contestFlag?"":"<fieldset>
+function createTopicInput($contestFlag=false,$guestFlag=false){
+$privacy = $contestFlag||$guestFlag?"":"<fieldset>
 <legend>Privacy settings:</legend>
 
 <div>
@@ -846,11 +846,11 @@ $privacy = $contestFlag?"":"<fieldset>
   <label for='2'>Anonymous</label>
 </div> */
 $inputbar = "
-<input type='text' size='30' onkeyup='lookupTopic(this.value)' id='topic-input'>
+<input placeholder='Enter topics' type='text' size='30' onkeyup='lookupTopic(this.value)' id='topic-input'>
 <div id='livesearch'></div>
 ";
 
-      $html = "<div class='form-check form-switch'>
+      $html = $guestFlag ?"<div>Add topics (click the dice for random topics)</div>" :"<div class='form-check form-switch'>
         <input class='form-check-input' type='checkbox' id='flexSwitchCheckChecked' name='autogen' onclick='boxClicked()'>
         <label class='form-check-label' for='flexSwitchCheckChecked'>Automatically generate topics</label>
       </div> ";

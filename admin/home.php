@@ -5,7 +5,8 @@ include('constant.php');
 ?>
 <style>
   body{
-    background-image: url('images/article_pic2.jpg');
+    background: linear-gradient(90deg,rgba(0, 0, 1, 0.9), rgba(88, 86, 86, 0.7)), url('images/article_pic2.jpg');
+    background-repeat: no-repeat;
     background-size: cover;
   }
   </style>
