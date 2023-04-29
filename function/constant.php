@@ -824,8 +824,9 @@ function returnDescriptionSubCategory($conn,$subID){
   $description = $row['description'];
   return $description;
 }
-function createTopicInput($contestFlag=false){
-$privacy = $contestFlag?"":"<fieldset>
+function createTopicInput($contestFlag=false,$topics=''){
+  if($contestFlag){return;}
+$privacy = "<fieldset>
 <legend>Privacy settings:</legend>
 
 <div>
@@ -855,7 +856,7 @@ $inputbar = "
         <label class='form-check-label' for='flexSwitchCheckChecked'>Automatically generate topics</label>
       </div> ";
       $html .= "<div id='topicDiv'>";
-      $html .= $inputbar."
+      $html .= $inputbar.$topics."
       <div>
         <span id='topics-display'></span>
         <button type='button' class=cleanbutton onclick='generateRandomTopic()'><i class='fa-solid fa-dice'></i></button>
@@ -866,14 +867,17 @@ $inputbar = "
 
 }
 
-function returnTags($conn,$id){
+
+
+function returnTags($conn,$id,$flag=true){
   $option = "";
   $sql = "SELECT topic.tid as id,name FROM `topicwriting` join writing on topicwriting.wid=writing.id join topic on topicwriting.tid=topic.tid where wid = $id";
   $res=mysqli_query($conn, $sql);
   while($row = mysqli_fetch_assoc($res)){
     $id = $row['id'];
     $topic = $row['name'];
-    $option .= "<span class='badge rounded-pill bg-light' onclick='searchByTopic($id)'>$topic</span>";
+    $option .= $flag ? "<span class='badge rounded-pill bg-light' onclick='searchByTopic($id)'>$topic</span>" : 
+    "<span class='badge rounded-pill bg-light' onclick='removeTopic(this.innerText)'>$topic</span>";
   }return $option;
 }
 
@@ -1213,25 +1217,74 @@ function createRatingSliderForUser($conn,$writing_id,$user){
 
   $sql = "SELECT * FROM `contestwriting` where writingID=$writing_id";
   $res = mysqli_query($conn,$sql);
-  if(mysqli_num_rows($res)==0){return;}
+  if(mysqli_num_rows($res)==0){
+    //printAllFeedback($conn,$writing_id);
+    return;}
   $row = mysqli_fetch_assoc($res);
   $cid = $row['contestID'];
   $sql = Contest::getJudgedContests($user)." and contest.id='$cid' ";
   $res = mysqli_query($conn,$sql);
   if(mysqli_num_rows($res)!=0){
-    createRatingSlider($writing_id,$cid);
+    createRatingSlider($writing_id,$cid,$user,$conn);
+  }else{
+    echo printAllFeedback($conn,$writing_id);
   } //something happens if there entries.
 }
 
-function createRatingSlider($writing_id,$contest_id){
+function createRatingSlider($writing_id,$contest_id,$user,$conn){
+//get the values for the range and feedback from $user and $conn
+  $sql = "select * from marks where writingID='$writing_id' and judgeID='$user'";
+  $res = mysqli_query($conn,$sql);
+    $flag = mysqli_num_rows($res)==0;
+    $row = mysqli_fetch_assoc($res);
+    $score = $flag?5:$row['score'];
+    $feedback = $flag?"":$row['feedback'];
   $str = "<form action='function/markWriting.php' method='post'>
   <input type='hidden' name='wid' value='$writing_id'>
   <input type='hidden' name='cid' value='$contest_id'>
-  <input type='range' class='form-range' min='0' max='10' step='1' name='marks'>
-  <input type='submit' value='Mark'>";
-  echo $str;
+  <label>Score: (between 0 to 10)</label>
+  <input type='range' class='form-range' min='0' max='10' step='1' value='$score' name='marks'>
+  <textarea style='margin-bottom: 2%;' class='form-control' name='feedback' placeholder='leave feedback'>$feedback</textarea>
+  <input type='submit' class='btn btn-primary' value='Mark'>";
+
+  echo $str.printAllFeedback($conn,$writing_id);
 }
 
+function printAllFeedback($conn,$writing_id){
+  $sql = "SELECT * FROM `marks` join usernames on marks.judgeID=usernames.id where writingID='$writing_id'";
+  $res = mysqli_query($conn,$sql);
+  $str = "<h2
+  style='padding-top: 6%;
+  border-top: 1px solid lightgray;
+  margin-top: 8%;'
+  >Feedback:</h2>";
+  $flag = true;
+  while($row = mysqli_fetch_assoc($res)){
+    $judge = $row['username'];
+    $judgeID=$row['judgeID'];
+    $score = $row['score'];
+    $feedback = $row['feedback'];
+    $str .= printFeedback($judge, $judgeID, $score, $feedback);
+    $flag = false;
+  }
+  return $flag?"No feedback yet.":$str;
+
+}
+
+function printFeedback($judge, $judgeID, $score, $feedback=""){
+  $str = "<div class='row'>
+  <div class='col-2'><h1>$score</h1></div>
+  <div class='col-10'><figure>
+  <blockquote class='blockquote'>
+    <p class='mb-0'>$feedback</p>
+  </blockquote>
+  <figcaption class='blockquote-footer'>
+    <a href='$judgeID'>$judge</a>
+  </figcaption>
+</figure></div>
+</div>";
+return $str;
+}
 
 function printContestEntry($obj){
 

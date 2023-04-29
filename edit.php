@@ -5,7 +5,7 @@ include('partial/navbar.php');
 <?php
 $id = $_GET['id'];
 
-getWritingInfo($conn,$id);
+//getWritingInfo($conn,$id);
 
 ?>
 
