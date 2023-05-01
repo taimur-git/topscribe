@@ -1,7 +1,5 @@
 {
     "require": {
-        "textrazor/textrazor-php": "^1.0",
-        "rodchyn/markdown2pdf": "^1.0",
-        "dompdf/dompdf": "^0.8.3"
+        "textrazor/textrazor-php": "^1.0"
     }
 }

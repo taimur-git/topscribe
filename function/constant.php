@@ -224,8 +224,8 @@
     function getInfo($row,$conn){
       
       $this->id=$row['id'];
-      $this->title=$row['title'];
-      $this->description=$row['description'];
+      $this->title=stripslashes($row['title']);
+      $this->description=stripslashes($row['description']);
       $this->startTime=$row['start'];
       $this->endTime=$row['end'];
       $this->capacity = $row['capacity'];
@@ -740,6 +740,8 @@ function renderContestListView($conn,$user=0,$host=1){
 }
 
 function createContest($conn, $title, $description,$host,$subcategoryID=19,$capacity=null,$start=null,$end=null,$judges=null,$classroom=null,$bannerURL="images/banner.png"){
+  $title = addslashes($title);
+  $description = addslashes($description);
   $accepted = allowedToHost($conn,$host); //check is host is allowed or not
   $sql = $start==null ? 
   "insert into contest

@@ -6,79 +6,11 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit274e754f7692d2524f902f50e69ffbdd
 {
-    public static $prefixLengthsPsr4 = array (
-        'S' => 
-        array (
-            'Svg\\' => 4,
-            'Superscript\\' => 12,
-            'Sabberworm\\CSS\\' => 15,
-        ),
-        'M' => 
-        array (
-            'Markdown\\' => 9,
-        ),
-        'F' => 
-        array (
-            'FontLib\\' => 8,
-        ),
-        'D' => 
-        array (
-            'Dompdf\\' => 7,
-        ),
-    );
-
-    public static $prefixDirsPsr4 = array (
-        'Svg\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg',
-        ),
-        'Superscript\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/rodchyn/superscript/src',
-        ),
-        'Sabberworm\\CSS\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/src',
-        ),
-        'Markdown\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/rodchyn/markdown2pdf/src',
-        ),
-        'FontLib\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phenx/php-font-lib/src/FontLib',
-        ),
-        'Dompdf\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/dompdf/dompdf/src',
-        ),
-    );
-
-    public static $prefixesPsr0 = array (
-        'P' => 
-        array (
-            'ParsedownExtra' => 
-            array (
-                0 => __DIR__ . '/..' . '/erusev/parsedown-extra',
-            ),
-            'Parsedown' => 
-            array (
-                0 => __DIR__ . '/..' . '/erusev/parsedown',
-            ),
-        ),
-    );
-
     public static $classMap = array (
         'AccountManager' => __DIR__ . '/..' . '/textrazor/textrazor-php/TextRazor.php',
         'ClassifierManager' => __DIR__ . '/..' . '/textrazor/textrazor-php/TextRazor.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'Cpdf' => __DIR__ . '/..' . '/dompdf/dompdf/lib/Cpdf.php',
         'DictionaryManager' => __DIR__ . '/..' . '/textrazor/textrazor-php/TextRazor.php',
-        'HTML5_Data' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Data.php',
-        'HTML5_InputStream' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/InputStream.php',
-        'HTML5_Parser' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Parser.php',
-        'HTML5_Tokenizer' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Tokenizer.php',
-        'HTML5_TreeBuilder' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/TreeBuilder.php',
         'TextRazor' => __DIR__ . '/..' . '/textrazor/textrazor-php/TextRazor.php',
         'TextRazorConnection' => __DIR__ . '/..' . '/textrazor/textrazor-php/TextRazor.php',
         'TextRazorQueryBuilder' => __DIR__ . '/..' . '/textrazor/textrazor-php/TextRazor.php',
@@ -88,9 +20,6 @@ class ComposerStaticInit274e754f7692d2524f902f50e69ffbdd
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit274e754f7692d2524f902f50e69ffbdd::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit274e754f7692d2524f902f50e69ffbdd::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit274e754f7692d2524f902f50e69ffbdd::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit274e754f7692d2524f902f50e69ffbdd::$classMap;
 
         }, null, ClassLoader::class);
