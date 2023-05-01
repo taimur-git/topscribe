@@ -438,7 +438,7 @@ return $card;
     $sql = trim($sql,"and ");
     return $sql;
   }
-  function showAllWriting($conn, $case=0,$user=0,$search='',$order=0,$asc=1,$top=0,$echoFlag=true){
+  function showAllWriting($conn, $case=0,$user=0,$search='',$order=0,$asc=2,$top=0,$echoFlag=true){
     $flag = true;
     $flag2 = false;
     $blurbLimit = 430;
@@ -527,10 +527,11 @@ return $card;
           $sql .= " order by readtime ";
           break;
         default:
+          $sql .= " order by t1.datePublished ";
           //if anything else, aka 0, then dont sort.
 
       }
-      if($order!=0){
+      //if($order!=0){
         switch($asc){
           case 1:
             $sql .= " asc ";
@@ -539,8 +540,9 @@ return $card;
             $sql .= " desc ";
             break;
           default:
+          $sql .= " desc ";
         }
-      }
+      //}
       if($flag2){
         $sql .= " limit $top";
       }
@@ -1099,7 +1101,8 @@ function renderUserPage($conn,$user,$currentUser=0){
   $row = mysqli_fetch_assoc($res);
   $username = $row['username'];
   $photo = $row['photo'];
-  if($currentUser!=0){
+  $contactButton = "";
+  if($currentUser>0){
     $added = returnIfAdded($conn,$user,$currentUser);
     $contactButton = $added?
     "<button class=cleanbutton onclick='removeContact($user)'><i class='fa-solid fa-user-minus'></i></button>"

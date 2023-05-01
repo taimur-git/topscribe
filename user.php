@@ -1,6 +1,6 @@
 <?php include('partial/navbar.php');?>
 <?php
-$user = $_SESSION['id'];
+$user = isset($_SESSION['id'])?$_SESSION['id']:-1;
 $page = isset($_GET['id'])?$_GET['id']:$user;
 
 if($user == $page){

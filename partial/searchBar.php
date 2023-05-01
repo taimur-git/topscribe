@@ -15,8 +15,9 @@
         <option value='4'>read time</option>
       </select>
       <select class="form-select hidden" id="sortSelect" onchange='renderView()'>
-        <option value='1'>ascending</option>
         <option value='2'>descending</option>
+        <option value='1'>ascending</option>
+        
       </select>
     </div>
 </div>
