@@ -15,15 +15,15 @@ $writer = profileView($conn,$id);
 if($user!=-1){
     
     $flag = ifBookmark($conn,$user,$id);
+    $flag2 = isContestEntry($conn,$id);
     $bookmark = "<button onclick='toggleBookmark($id)' class=cleanbutton><i class='fa-";
     $bookmark.= $flag ? "solid" : "regular";
     $bookmark.= " fa-bookmark' id='bookmark'></i></button>";
     echo $bookmark;
     if($writer == $user){
-        ///something
-        //<button href = 'editWriting?id=$id'>
-        echo "<button class='cleanbutton disabled' href='edit?id=$id'><i class='fa-solid fa-pen-to-square'></i></button>";
-        echo "<button onclick='deleteWriting($id)' class=cleanbutton><i class='fa-solid fa-trash'></i></button>";
+        
+        //echo "<button class='cleanbutton disabled' href='edit?id=$id'><i class='fa-solid fa-pen-to-square'></i></button>";
+        echo $flag2?"":"<button onclick='deleteWriting($id)' class=cleanbutton><i class='fa-solid fa-trash'></i></button>";
     }else{
         $added = returnIfAdded($conn,$writer,$user);
         echo $added?

@@ -98,7 +98,7 @@
     public $registered;
 
     public static function getBaseSQL(){
-        return "SELECT CURRENT_DATE<contest.start as early , CURRENT_DATE>contest.end as late, (CURRENT_DATE>contest.start and CURRENT_DATE<contest.end) as ongoing, 
+        return "SELECT distinct CURRENT_DATE<contest.start as early , CURRENT_DATE>contest.end as late, (CURRENT_DATE>contest.start and CURRENT_DATE<contest.end) as ongoing, 
       contest.*, usernames.username, usernames.canHost, subcategory.name,subcategory.description as subcategoryhelp
       FROM `contest` join usernames on contest.hostID=usernames.id join subcategory on contest.subcategoryID=subcategory.id ";
     }
@@ -109,6 +109,11 @@
     }
     public static function getJudgedContests($id){
       $sql = "left join grouplist on judgeGroup = groupID where ( grouplist.userid = '$id' or hostID = '$id') ";
+      return Contest::getBaseSQL().$sql;
+    }
+    public static function getRegisteredContests($id){
+      $sql = "join contestusers on contestusers.contestID=contest.id 
+      left join grouplist on writerGroup = groupID where ( grouplist.userid = '$id' or contestusers.writerID='$id');";
       return Contest::getBaseSQL().$sql;
     }
     public static function getSingleRow($id){
@@ -290,6 +295,9 @@
         $this->type
       );
     }
+
+
+
     function printEntries($conn){
       //getInfoByID($id,$conn);
       $flag = true;
@@ -306,23 +314,28 @@
       if($flag){echo "<p>There are no entries.</p>";}
       echo "</div>";
     }
+    
     function createButtons($user=-1,$conn=null,$inContest=true){
       $id = $this->id;
       $hostid = $this->hostID;
       $state = $this->state;
-      $userWrittenFlag = ifWrittenToContest($conn,$id,$user);//change this
+      $userWrittenFlag = ifWrittenToContest($conn,$id,$user);
       $userRegisterFlag = ifRegisteredToContest($conn,$id,$user);
-      $hostFlag = $user == $hostid;
+      $judgeFlag = isContestJudge($conn,$id,$user);
+      //$studentFlag = allowedInContest($conn,$id,$user);
+      $hostFlag = $user == $hostid || $judgeFlag;
       $guestFlag = $user == -1;
       $adminFlag = $user == 0;
       $assignmentNotFlag = $this->type!=1;
 
       $card = $inContest ? "<a class='btn btn-info' href='browse.php'>Back</a>" : "<a class='btn btn-info' href='contest.php?id=$id'>View</a>";
       $registerButton =  "<a class='btn btn-info' href='function/contestRegister.php?cid=$id'>Register</a>";
-      $endButton = "<a class='btn btn-danger disabled' href='function/contestEnd.php?cid=$id'>End Contest</a>";
       $enterButton = "<a class='btn btn-info' href='editor.php?cid=$id'>Enter</a>";
+
+      //buttons that do not work yet.
+      $endButton = "<a class='btn btn-danger disabled' href='function/contestEnd.php?cid=$id'>End Contest</a>";
       $editEntryButton = "<a class='btn btn-info disabled' href='edit.php?id='>Edit Entry</a>";
-      $editContestButton = "<a class='btn btn-info disabled' href='discover.php?cid=$id'>Edit Contest</a>";
+      $editContestButton = "<a class='btn btn-info disabled' href='editContest.php?cid=$id'>Edit Contest</a>";
       $unregisterButton = "<a class='btn btn-info disabled' href='unregister.php?cid=$id'>Unregister</a>";
 
       $approveAllButton = "<a class='btn btn-info' href='function/approveContest.php?id=3&cid=$hostid'>Approve All Now</a>";
@@ -340,6 +353,7 @@
       $userButton2 = $userWrittenFlag ? $editEntryButton : $enterButton;
 
       $assignmentButton = $assignmentNotFlag ? $userButton : "";
+      //$entryButton = $studentFlag ? $userButton2 : "";
 
       //figure out who the user is.
       //if its a guest, do nothing.
@@ -382,10 +396,16 @@
       $startTime = $this->startTime;
       $endTime = $this->endTime;
       $hostFlag = $user == $hostid;
+      $assignmentFlag = $this->type==1;
 
-      $userWrittenFlag = false;//change this
-      $userRegisterFlag = ifRegisteredToContest($conn,$id,$user);//change this
-
+      $allowedInContest = allowedInContest($conn,$id,$user);
+      $isJudge = $hostFlag || isContestJudge($conn,$id,$user);
+      $allowedAssignment = $allowedInContest || $isJudge;
+      //$userWrittenFlag = ifWrittenToContest($conn,$id,$user);//change this
+      //$userRegisterFlag = ifRegisteredToContest($conn,$id,$user);//change this
+      if($assignmentFlag&&!$allowedAssignment){
+        return "";
+      }
       $card = "
         <div class='card mb-3 contestcard'>
         <img class='card-img-top contest-banner' src='$bannerurl' alt='contest banner'>
@@ -441,6 +461,7 @@ return $card;
   function showAllWriting($conn, $case=0,$user=0,$search='',$order=0,$asc=2,$top=0,$echoFlag=true){
     $flag = true;
     $flag2 = false;
+    $flag3 = true;
     $blurbLimit = 430;
     if($top!=0){
       $flag2 = true;
@@ -551,9 +572,10 @@ return $card;
           $obj = new Writing();
           $obj->generate($row,$conn);
           $cards .= $flag2?renderTopWritings($obj):renderWritingFromObj($obj,$flag);
+          $flag3=false;
       }
       $cards.='</div>';
-  
+      $cards = $flag3?"No results.":$cards;
       if($echoFlag) {echo $cards;}
       return $cards;
   }
@@ -685,17 +707,34 @@ function showAllContest($conn,$user=0){
     }
 }
 
-function renderContestListView($conn,$user=0,$host=true){
-  $sql = $host?Contest::getHostedContests($user):Contest::getJudgedContests($user);
+function renderContestListView($conn,$user=0,$host=1){
+  switch($host){
+    case 1:
+      $sql = Contest::getHostedContests($user);
+      break;
+    case 2:
+      $sql = Contest::getJudgedContests($user);
+      break;
+    case 3:
+      $sql = Contest::getRegisteredContests($user);
+      break;
+    default:
+    $sql = Contest::getBaseSQL($user);
+    break;
+  }
+//  $sql = $host?Contest::getHostedContests($user):Contest::getJudgedContests($user);
+  //$sql = Contest::getBaseSQL();
   $res = mysqli_query($conn,$sql);
   $cards ="";
+  $flag = true;
   while($row = mysqli_fetch_assoc($res)){
     $obj = new Contest();
     $obj->getInfo($row,$conn);
     $card = $obj->createContestListItem($user);
     $cards .= $card;
+    $flag = false;
   }
-  return $cards;
+  return $flag?"No contests.":$cards;
 }
 
 function createContest($conn, $title, $description,$host,$subcategoryID=19,$capacity=null,$start=null,$end=null,$judges=null,$classroom=null,$bannerURL="images/banner.png"){
@@ -1068,6 +1107,9 @@ function printUserCard($id,$name,$photo,$loggedin=false,$added=false,$flag=false
       if($loggedin&&!$flag){
         $card.=$added?"<button class=cleanbutton onclick='removeContact($id)'><i class='fa-solid fa-user-minus'></i></button>":"<button class=cleanbutton onclick='addContact($id)'><i class='fa-solid fa-user-plus'></i></button>";
       }
+      if($flag){
+        $card.="<a href='contacts.php'><i class='fa-solid fa-address-book'></i></a>";
+      }
     $card .="</div>
   </div>";
   return $card;
@@ -1084,7 +1126,7 @@ function showAllUsers($conn,$user=0){
     $flag = $user==$id;
     $added = returnIfAdded($conn,$id,$user);
     //check if current user is connected to session
-    $str = $id==0?:printUserCard($id,$name,$photo,$loggedin,$added,$flag);
+    $str = $id==0?"":printUserCard($id,$name,$photo,$loggedin,$added,$flag);
     echo $str;
   }
 
@@ -1120,19 +1162,19 @@ function renderUserPage($conn,$user,$currentUser=0){
 
 function contestListItem($cid,$title,$startDate,$registered,$capacity,$description,$endDate,$status,$type){
   //type = 0 contest 1 assignment 2 request?
-  $type="";
+  $typeStr="";
   switch($type){
     case 0:
-      $type="Contest";
+      $typeStr="Contest";
       break;
     case 1:
-      $type="Assignment";
+      $typeStr="Assignment";
       break;
     case 2:
-      $type="Request";
+      $typeStr="Request";
       break;
     default:
-      $type="Error";
+      $typeStr="Error";
   }
   //status = 0 (hasnt started) = 1 (ongoing), 2 (ended)
   $statusStr="";
@@ -1149,7 +1191,7 @@ function contestListItem($cid,$title,$startDate,$registered,$capacity,$descripti
     default:
       $statusStr="Error $status";
   }
-  $type = createPill($type);
+  $type = createPill($typeStr);
   $statusStr = createPill($statusStr,false);
   $str = "<a href='contest.php?id=$cid' class='list-group-item list-group-item-action flex-column align-items-start active'>
   <div class='d-flex w-100 justify-content-between'>
@@ -1204,6 +1246,22 @@ function ifWrittenToContest($conn,$cid,$authorID){
  where contestID='$cid' and authorID='$authorID'";
 $res = mysqli_query($conn,$sql);
 return mysqli_num_rows($res)!=0;
+}
+function isContestJudge($conn,$id,$user){
+  $sql = "SELECT * FROM `contest` join grouplist on judgeGroup=grouplist.groupID where grouplist.userID='$user' and contest.id='$id'";
+  $res = mysqli_query($conn,$sql);
+  return mysqli_num_rows($res)!=0;
+}
+function allowedInContest($conn,$id,$user){
+  $sql = "SELECT * FROM `contest` join grouplist on writerGroup=grouplist.groupID where grouplist.userID='$user' and contest.id='$id'";
+  $res = mysqli_query($conn,$sql);
+  return mysqli_num_rows($res)!=0;
+  
+}
+function isContestEntry($conn,$id){
+  $sql = "SELECT * FROM `writing` join contestwriting on writing.id = contestwriting.writingID where writing.id='$id'";
+  $res = mysqli_query($conn,$sql);
+  return mysqli_num_rows($res)!=0;
 }
 function getSubCategoryFromContest($conn,$cid){
   $sql = "SELECT subcategoryID,name,subcategory.description as helpstr  FROM `contest` join subcategory on subcategoryID=subcategory.id where contest.id=$cid";
@@ -1387,6 +1445,8 @@ function allowedToHost($conn,$id){
   $canHost = $row['canHost'];
   return $canHost;
   }
+  
+ 
 ?>
 
 
