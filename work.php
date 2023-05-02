@@ -22,7 +22,7 @@ if($user!=-1){
     echo $bookmark;
     if($writer == $user){
         
-        //echo "<button class='cleanbutton disabled' href='edit?id=$id'><i class='fa-solid fa-pen-to-square'></i></button>";
+        echo $flag2?"":"<a class='cleanbutton' href='edit.php?id=$id'><i class='fa-solid fa-pen-to-square'></i></a>";
         echo $flag2?"":"<button onclick='deleteWriting($id)' class=cleanbutton><i class='fa-solid fa-trash'></i></button>";
     }else{
         $added = returnIfAdded($conn,$writer,$user);

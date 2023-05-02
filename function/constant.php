@@ -65,6 +65,23 @@
         $this->readtime.=' min read';
 
       }
+      function generate3($id,$conn){
+        $sql = "select title, body, username as author, datePublished, subcategory.id as subcategory
+        FROM `writing` join `subcategory` on writing.subcategoryID=subcategory.id
+        join `usernames` on writing.authorID=usernames.id
+        where writing.id = $id";
+        $res = mysqli_query($conn,$sql);
+        $row = mysqli_fetch_assoc($res);
+
+    $title = $row['title'];
+    $this->title= stripslashes($title);
+    $body = $row['body'];
+    $this->body = stripslashes($body);
+    $this->author = $row['author'];
+    //$date = $row['datePublished'];
+    $this->subcategory = $row['subcategory'];
+
+      }
   }
 
   class Contest{
@@ -320,6 +337,7 @@
       $hostid = $this->hostID;
       $state = $this->state;
       $userWrittenFlag = ifWrittenToContest($conn,$id,$user);
+      $writtenEntry = $userWrittenFlag ? ifWrittenToContest($conn,$id,$user,false):0;
       $userRegisterFlag = ifRegisteredToContest($conn,$id,$user);
       $judgeFlag = isContestJudge($conn,$id,$user);
       //$studentFlag = allowedInContest($conn,$id,$user);
@@ -331,13 +349,16 @@
       $card = $inContest ? "<a class='btn btn-info' href='browse.php'>Back</a>" : "<a class='btn btn-info' href='contest.php?id=$id'>View</a>";
       $registerButton =  "<a class='btn btn-info' href='function/contestRegister.php?cid=$id'>Register</a>";
       $enterButton = "<a class='btn btn-info' href='editor.php?cid=$id'>Enter</a>";
+      $viewEntry = "<a class='btn btn-info' href='work.php?id=$writtenEntry'>View Entry</a>";
 
       //buttons that do not work yet.
-      $endButton = "<a class='btn btn-danger disabled' href='function/contestEnd.php?cid=$id'>End Contest</a>";
-      $editEntryButton = "<a class='btn btn-info disabled' href='edit.php?id='>Edit Entry</a>";
+      
+      $editEntryButton = "<a class='btn btn-info disabled' href='edit.php?id=$writtenEntry'>Edit Entry</a>";
       $editContestButton = "<a class='btn btn-info disabled' href='editContest.php?cid=$id'>Edit Contest</a>";
-      $unregisterButton = "<a class='btn btn-info disabled' href='unregister.php?cid=$id'>Unregister</a>";
+      $editContestButton = "";
 
+      $endButton = "<a class='btn btn-danger ' href='function/contestEnd.php?cid=$id'>End Contest</a>";
+      $unregisterButton = "<a class='btn btn-info' href='function/unregister.php?cid=$id'>Unregister</a>";
       $approveAllButton = "<a class='btn btn-info' href='function/approveContest.php?id=3&cid=$hostid'>Approve All Now</a>";
       $approveFutureButton = "<a class='btn btn-info' href='function/approveContest.php?id=2&cid=$hostid'>Approve Future</a>";
       $approveContestButton = "<a class='btn btn-info' href='function/approveContest.php?id=1&cid=$id'>Approve</a>";
@@ -350,8 +371,9 @@
       $adminPanel = "<div>".$card.$approveContestButton.$denyButton."</div><div>".$approveAllButton.$approveFutureButton."</div>";
 
       $userButton = $userRegisterFlag ? $unregisterButton : $registerButton;
-      $userButton2 = $userWrittenFlag ? $editEntryButton : $enterButton;
-
+      //$userButton2 = $userWrittenFlag ? $editEntryButton : $enterButton;
+      $userButton2 = $userWrittenFlag ? $viewEntry : $enterButton;
+      $userButton = $userWrittenFlag ? "":$userButton;
       $assignmentButton = $assignmentNotFlag ? $userButton : "";
       //$entryButton = $studentFlag ? $userButton2 : "";
 
@@ -397,6 +419,8 @@
       $endTime = $this->endTime;
       $hostFlag = $user == $hostid;
       $assignmentFlag = $this->type==1;
+
+      
 
       $allowedInContest = allowedInContest($conn,$id,$user);
       $isJudge = $hostFlag || isContestJudge($conn,$id,$user);
@@ -816,7 +840,7 @@ function ifBookmark($conn,$userid,$writingid){
   return mysqli_num_rows($res)!=0;
 }
 
-function createCategorySelect($conn){
+function createCategorySelect($conn,$id=-1){
   $sql = "select * from category";
   $res=mysqli_query($conn, $sql);
   echo "<label for='category-select'>Select Category:
@@ -826,7 +850,7 @@ function createCategorySelect($conn){
     $catid = $row['id'];
     $name = $row['name'];
     echo "<optgroup label='$name'>";
-    echoSubCategoryOptions($conn, $catid);
+    echoSubCategoryOptions($conn, $catid,$id);
     echo "</optgroup>";
   }
   echo "</select></label>";
@@ -852,13 +876,20 @@ function createGroupSelect($conn,$user,$judge=false){
 
 }
 
-function echoSubCategoryOptions($conn, $catid){
+function echoSubCategoryOptions($conn, $catid, $id = -1){
+
   $sql = "select * from subcategory where catid = $catid";
   $res=mysqli_query($conn, $sql);
   while($row = mysqli_fetch_assoc($res)){
     $subid = $row['id'];
     $name = $row['name'];
-    $option = "<option value='$subid'>$name</option>";
+    $option;
+    if($id!=-1&&$id==$subid){
+      $option = "<option value='$subid' selected>$name</option>";
+    }else{
+$option = "<option value='$subid'>$name</option>";
+    }
+    
     echo $option;
   }
 }
@@ -1244,13 +1275,17 @@ function ifRegisteredToContest($conn,$cid,$authorID){
   return mysqli_num_rows($res)!=0;
 
 }
-function ifWrittenToContest($conn,$cid,$authorID){
+function ifWrittenToContest($conn,$cid,$authorID,$flag=true){
   $sql = "SELECT * FROM `contestwriting` 
  join writing on writingID=writing.id 
  where contestID='$cid' and authorID='$authorID'";
 $res = mysqli_query($conn,$sql);
-return mysqli_num_rows($res)!=0;
+$flag2 = mysqli_num_rows($res)!=0;
+$row = mysqli_fetch_assoc($res);
+$id = $flag2?$row['writingID']:0;
+return $flag?$flag2:$id;
 }
+
 function isContestJudge($conn,$id,$user){
   $sql = "SELECT * FROM `contest` join grouplist on judgeGroup=grouplist.groupID where grouplist.userID='$user' and contest.id='$id'";
   $res = mysqli_query($conn,$sql);
